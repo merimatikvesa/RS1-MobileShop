@@ -1,0 +1,52 @@
+# Ignore Visual Studio & JetBrains files
+.vs/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln*
+*.csproj.user
+
+# Ignore build outputs
+bin/
+obj/
+out/
+publish/
+**/node_modules/
+dist/
+tmp/
+
+# Ignore log files and generated files
+*.log
+logs/
+**/*.swp
+**/*.swo
+*.bak
+*.tmp
+*.cache
+npm-debug.log
+yarn-error.log
+
+# Ignore .NET dependencies
+*.db
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+*.pdb
+Database/
+
+# Ignore Angular build files
+angular.json
+package-lock.json
+yarn.lock
+coverage/
+e2e/
+
+# Ignore secrets (DO NOT COMMIT)
+secrets.json
+**/secrets.json
+
+# Ignore user-specific VS Code settings
+.vscode/
+.history/
