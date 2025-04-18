@@ -37,9 +37,6 @@ yarn-error.log
 Database/
 
 # Ignore Angular build files
-angular.json
-package-lock.json
-yarn.lock
 coverage/
 e2e/
 
