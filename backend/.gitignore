@@ -1,0 +1,34 @@
+﻿# Ignore build outputs
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vs/
+
+# Auto-generated files
+Generated_Code/
+
+# Local secrets and config
+appsettings.Local.json
+
+# Entity Framework Migrations metadata (ako budeš radila snapshot)
+Migrations/
+
+# Rider/VSCode/JetBrains folders
+.idea/
+.vscode/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Logs
+*.log
+
+# Others
+*.db
+*.DS_Store
