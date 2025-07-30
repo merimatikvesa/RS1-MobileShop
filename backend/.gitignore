@@ -15,8 +15,8 @@ Generated_Code/
 # Local secrets and config
 appsettings.Local.json
 
-# Entity Framework Migrations metadata (ako budeš radila snapshot)
-Migrations/
+# Entity Framework Migrations metadata 
+#Migrations/
 
 # Rider/VSCode/JetBrains folders
 .idea/
