@@ -2,12 +2,12 @@
 
 namespace backend.Models
 {
-    public class Phone
+ 
+    public class Warranty
     {
         [Key]
-        public int PhoneId { get; set; }
-        public int OSId { get; set; }
-        public int ProductId { get; set; }
         public int WarrantyId { get; set; }
+        public string Type { get; set; }
+        public DateTime Duration { get; set; }
     }
 }

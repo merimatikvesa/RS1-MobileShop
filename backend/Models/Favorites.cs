@@ -2,12 +2,11 @@
 
 namespace backend.Models
 {
-    public class Phone
+    public class Favorites
     {
         [Key]
-        public int PhoneId { get; set; }
-        public int OSId { get; set; }
+        public int FavoriteId { get; set; }
+        public int UserId { get; set; }
         public int ProductId { get; set; }
-        public int WarrantyId { get; set; }
     }
 }
