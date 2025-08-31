@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250826193935_AddEntities_NoRelations")]
-    partial class AddEntities_NoRelations
+    [Migration("20250831004329_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,7 +62,13 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdministratorId"));
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.HasKey("AdministratorId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.ToTable("Administrators");
                 });
@@ -89,6 +95,8 @@ namespace backend.Migrations
                         .HasColumnType("nvarchar(512)");
 
                     b.HasKey("AuthTokenId");
+
+                    b.HasIndex("AccountID");
 
                     b.HasIndex("Value")
                         .IsUnique();
@@ -163,6 +171,10 @@ namespace backend.Migrations
 
                     b.HasKey("FavoriteId");
 
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("Favorites");
                 });
 
@@ -202,22 +214,16 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.Inventory", b =>
                 {
-                    b.Property<int>("InventoryId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InventoryId"));
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
                     b.Property<int>("QuantityInStock")
                         .HasColumnType("int");
 
-                    b.HasKey("InventoryId");
+                    b.HasKey("ProductId");
 
                     b.ToTable("Inventory");
                 });
@@ -265,6 +271,10 @@ namespace backend.Migrations
 
                     b.HasKey("OrderId");
 
+                    b.HasIndex("PaymentMethodId");
+
+                    b.HasIndex("UserId");
+
                     b.ToTable("Orders");
                 });
 
@@ -286,6 +296,10 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("OrderItemId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
                 });
@@ -326,6 +340,13 @@ namespace backend.Migrations
 
                     b.HasKey("PhoneId");
 
+                    b.HasIndex("OSId");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.HasIndex("WarrantyId");
+
                     b.ToTable("Phones");
                 });
 
@@ -354,13 +375,19 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PromotionId")
+                    b.Property<int?>("PromotionId")
                         .HasColumnType("int");
 
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
                 });
@@ -380,6 +407,10 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ProductImageId");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductImages");
                 });
@@ -401,6 +432,9 @@ namespace backend.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PromotionName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -409,6 +443,9 @@ namespace backend.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("PromotionId");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
 
                     b.ToTable("Promotions");
                 });
@@ -435,6 +472,10 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ReviewId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reviews");
                 });
@@ -473,7 +514,7 @@ namespace backend.Migrations
                     b.Property<int>("ShipmentMethodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ShippingAdress")
+                    b.Property<string>("ShippingAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -482,16 +523,18 @@ namespace backend.Migrations
 
                     b.HasKey("ShippingId");
 
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("ShipmentMethodId");
+
                     b.ToTable("ShippingDetails");
                 });
 
             modelBuilder.Entity("backend.Models.Specs", b =>
                 {
                     b.Property<int>("PhoneId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PhoneId"));
 
                     b.Property<string>("BatteryCapacity")
                         .IsRequired()
@@ -530,7 +573,7 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SupplierId"));
 
-                    b.Property<string>("Adress")
+                    b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -555,12 +598,16 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CityId")
                         .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("GenderId")
                         .HasColumnType("int");
@@ -570,6 +617,13 @@ namespace backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.HasIndex("CityId");
+
+                    b.HasIndex("GenderId");
 
                     b.ToTable("Users");
                 });
@@ -592,6 +646,355 @@ namespace backend.Migrations
                     b.HasKey("WarrantyId");
 
                     b.ToTable("Warranties");
+                });
+
+            modelBuilder.Entity("backend.Models.Administrator", b =>
+                {
+                    b.HasOne("backend.Models.Account", "Account")
+                        .WithOne("Administrator")
+                        .HasForeignKey("backend.Models.Administrator", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("backend.Models.AuthToken", b =>
+                {
+                    b.HasOne("backend.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("backend.Models.Favorites", b =>
+                {
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("Favorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.Inventory", b =>
+                {
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithOne("Inventory")
+                        .HasForeignKey("backend.Models.Inventory", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("backend.Models.Order", b =>
+                {
+                    b.HasOne("backend.Models.PaymentMethod", "PaymentMethod")
+                        .WithMany("Orders")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.OrderItem", b =>
+                {
+                    b.HasOne("backend.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("backend.Models.Phone", b =>
+                {
+                    b.HasOne("backend.Models.OS", "OS")
+                        .WithMany("Phones")
+                        .HasForeignKey("OSId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithOne("Phone")
+                        .HasForeignKey("backend.Models.Phone", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Warranty", "Warranty")
+                        .WithMany("Phones")
+                        .HasForeignKey("WarrantyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OS");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Warranty");
+                });
+
+            modelBuilder.Entity("backend.Models.Product", b =>
+                {
+                    b.HasOne("backend.Models.Brand", "Brand")
+                        .WithMany("Products")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Supplier", "Supplier")
+                        .WithMany("Products")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Brand");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("backend.Models.ProductImage", b =>
+                {
+                    b.HasOne("backend.Models.Image", "Image")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("backend.Models.Promotion", b =>
+                {
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithOne("Promotion")
+                        .HasForeignKey("backend.Models.Promotion", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("backend.Models.Review", b =>
+                {
+                    b.HasOne("backend.Models.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.ShippingDetails", b =>
+                {
+                    b.HasOne("backend.Models.Order", "Order")
+                        .WithOne("ShippingDetail")
+                        .HasForeignKey("backend.Models.ShippingDetails", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.ShipmentMethod", "ShipmentMethod")
+                        .WithMany("ShippingDetails")
+                        .HasForeignKey("ShipmentMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("ShipmentMethod");
+                });
+
+            modelBuilder.Entity("backend.Models.Specs", b =>
+                {
+                    b.HasOne("backend.Models.Phone", "Phone")
+                        .WithOne("Specs")
+                        .HasForeignKey("backend.Models.Specs", "PhoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Phone");
+                });
+
+            modelBuilder.Entity("backend.Models.User", b =>
+                {
+                    b.HasOne("backend.Models.Account", "Account")
+                        .WithOne("User")
+                        .HasForeignKey("backend.Models.User", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.City", "City")
+                        .WithMany("Users")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.Gender", "Gender")
+                        .WithMany("Users")
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("City");
+
+                    b.Navigation("Gender");
+                });
+
+            modelBuilder.Entity("backend.Models.Account", b =>
+                {
+                    b.Navigation("Administrator");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.Brand", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("backend.Models.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("backend.Models.City", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("backend.Models.Gender", b =>
+                {
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("backend.Models.Image", b =>
+                {
+                    b.Navigation("ProductImages");
+                });
+
+            modelBuilder.Entity("backend.Models.OS", b =>
+                {
+                    b.Navigation("Phones");
+                });
+
+            modelBuilder.Entity("backend.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("ShippingDetail")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("backend.Models.PaymentMethod", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("backend.Models.Phone", b =>
+                {
+                    b.Navigation("Specs")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("backend.Models.Product", b =>
+                {
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Images");
+
+                    b.Navigation("Inventory");
+
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("Phone")
+                        .IsRequired();
+
+                    b.Navigation("Promotion")
+                        .IsRequired();
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("backend.Models.ShipmentMethod", b =>
+                {
+                    b.Navigation("ShippingDetails");
+                });
+
+            modelBuilder.Entity("backend.Models.Supplier", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("backend.Models.User", b =>
+                {
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("backend.Models.Warranty", b =>
+                {
+                    b.Navigation("Phones");
                 });
 #pragma warning restore 612, 618
         }
