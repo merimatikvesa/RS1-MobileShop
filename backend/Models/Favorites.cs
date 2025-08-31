@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; 
 
 namespace backend.Models
 {
@@ -7,6 +8,8 @@ namespace backend.Models
         [Key]
         public int FavoriteId { get; set; }
         public int UserId { get; set; }
+        public User User { get; set; }
         public int ProductId { get; set; }
+        public Product Product { get; set; }
     }
 }

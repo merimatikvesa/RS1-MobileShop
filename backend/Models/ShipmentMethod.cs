@@ -7,7 +7,11 @@ namespace backend.Models
     {
         [Key]
         public int ShipmentMethodId { get; set; }
+        [Required]
         public string ShipmentCompany {  get; set; }
+        [Required]
         public decimal ShipmentPrice { get; set; }
+
+        public ICollection<ShippingDetails> ShippingDetails { get; set; } = new List<ShippingDetails>();
     }
 }

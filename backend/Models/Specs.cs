@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace backend.Models
 {
     public class Specs
     {
-        [Key]
+        [Key, ForeignKey("Phone")]
         public int PhoneId { get; set; }
         public string RAM { get; set; }
         public string Storage { get; set; }
@@ -12,5 +14,7 @@ namespace backend.Models
         public string FrontCamera { get; set; }
         public string BatteryCapacity { get; set; }
         public string Color {  get; set; }
+
+        public Phone Phone { get; set; }
     }
 }

@@ -7,5 +7,7 @@ namespace backend.Models
         [Key]
         public int PaymentMethodId { get; set; }
         public string Type { get; set; }
+
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

@@ -7,5 +7,7 @@ namespace backend.Models
         [Key]
         public int ImageId { get; set; }
         public string ImagePath { get; set; } = string.Empty;
+
+        public ICollection<ProductImage> ProductImages { get; set;} = new List<ProductImage>();
     }
 }

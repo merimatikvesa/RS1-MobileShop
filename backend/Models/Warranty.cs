@@ -9,5 +9,8 @@ namespace backend.Models
         public int WarrantyId { get; set; }
         public string Type { get; set; }
         public DateTime Duration { get; set; }
+
+        public ICollection<Phone> Phones { get; set; } = new List<Phone>();
+
     }
 }

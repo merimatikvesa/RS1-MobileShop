@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
@@ -11,6 +12,9 @@ namespace backend.Models
         public string Value { get; set; }=string.Empty;
         [Required]
         public int AccountID { get; set; }
+
+        [ForeignKey("AccountID")]
+        public Account Account { get; set; }
         public DateTime TimeGenerated { get; set; }
 
     }
