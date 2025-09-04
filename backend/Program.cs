@@ -1,5 +1,9 @@
 using backend.Data;
+using backend.Helper.Auth;
+using backend.Services.Auth;
 using Microsoft.EntityFrameworkCore;
+using backend.Helper.Auth;
+using backend.Services.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +20,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddScoped<IJwtService, JwtService>();
+
 
 var app = builder.Build();
 
