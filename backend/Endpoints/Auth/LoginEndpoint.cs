@@ -29,7 +29,7 @@ namespace backend.Endpoints.Auth
         {
             // Basic validation (with DataAnnotations on DTO)
             if (string.IsNullOrWhiteSpace(request.Username) ||
-                string.IsNullOrWhiteSpace(request.Password))
+                string.IsNullOrWhiteSpace(request.Password)) // TODO: Add password hashing in future implementation
             {
                 return BadRequest(new { errors = new[] { "Username and password are required." } });
             }
