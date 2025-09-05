@@ -8,6 +8,7 @@ namespace backend.Endpoints.Test
     public class GetProtectedEndpoint
         : MyEndpointBaseAsync.WithoutRequest<string>
     {
+        // Protected test endpoint for JWT verification
         [HttpGet("api/test/protected")]
         public override async Task<ActionResult<string>> HandleAsync(
             CancellationToken cancellationToken = default)
