@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { AuthService } from '../../../core/services/auth/auth.service';
+import { LoginRequestDto } from '../../../core/models/auth/login-request.dto';
 
 @Component({
   selector: 'app-login',
@@ -10,11 +12,11 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+
   loading = false;
   errorMsg = '';
-
-  
-  private fb = inject(FormBuilder);
 
   form: FormGroup = this.fb.group({
     username: ['', Validators.required],
@@ -26,7 +28,20 @@ export class LoginComponent {
       this.form.markAllAsTouched();
       return;
     }
-    console.log('Login payload', this.form.value);
+
+    this.loading = true;
+    const payload: LoginRequestDto = this.form.value;
+
+    this.authService.login(payload).subscribe({
+      next: (res) => {
+        console.log('Login success:', res);
+      },
+      error: (err) => {
+        this.errorMsg = 'Invalid credentials';
+        this.loading = false;
+      }
+    });
+
   }
 
   get f() { return this.form.controls; }
