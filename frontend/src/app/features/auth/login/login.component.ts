@@ -35,9 +35,16 @@ export class LoginComponent {
     this.authService.login(payload).subscribe({
       next: (res) => {
         console.log('Login success:', res);
+      
+        //saving token and username in LocalStorage
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('username', res.username);
+
+      this.loading = false;
       },
       error: (err) => {
-        this.errorMsg = 'Invalid credentials';
+        console.error('logina failed: ', err)
+        this.errorMsg = 'Invalid username or password';
         this.loading = false;
       }
     });
