@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { LoginRequestDto } from '../../../core/models/auth/login-request.dto';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,10 @@ import { LoginRequestDto } from '../../../core/models/auth/login-request.dto';
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute)
   private authService = inject(AuthService);
+  
 
   loading = false;
   errorMsg = '';
@@ -39,6 +43,9 @@ export class LoginComponent {
         //saving token and username in LocalStorage
       localStorage.setItem('token', res.token);
       localStorage.setItem('username', res.username);
+
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.router.navigateByUrl(returnUrl);
 
       this.loading = false;
       },
