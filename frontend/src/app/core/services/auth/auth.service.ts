@@ -1,15 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LoginRequestDto } from '../../models/auth/login-request.dto';
 import { LoginResponseDto } from '../../models/auth/login-response.dto';
 import { environment } from '../../../../evnvironments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private apiUrl = environment.apiBaseUrl; // prilagodi svom backendu
-
+  private snack = inject(MatSnackBar);
   constructor(private http: HttpClient) {}
 
   login(dto: LoginRequestDto): Observable<LoginResponseDto> {
@@ -19,5 +21,10 @@ export class AuthService {
   logout():void {
   localStorage.removeItem('token');
   localStorage.removeItem('username');
+
+   this.snack.open('Uspješno ste se odjavili.', 'Zatvori', {
+      duration: 3000,
+      panelClass: ['snack-success']
+    });
 }
 }
