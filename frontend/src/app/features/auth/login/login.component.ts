@@ -4,11 +4,12 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { LoginRequestDto } from '../../../core/models/auth/login-request.dto';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -17,6 +18,7 @@ export class LoginComponent {
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private authService = inject(AuthService);
+  private snack = inject(MatSnackBar);
   
 
   loading = false;
@@ -44,15 +46,23 @@ export class LoginComponent {
       localStorage.setItem('token', res.token);
       localStorage.setItem('username', res.username);
 
+        this.snack.open('Uspješna prijava! Dobrodošli.', 'Zatvori', { duration: 3000, panelClass: ['snack-success'] });
+
         const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
         this.router.navigateByUrl(returnUrl);
 
       this.loading = false;
       },
       error: (err) => {
-        console.error('logina failed: ', err)
-        this.errorMsg = 'Invalid username or password';
         this.loading = false;
+        if (err?.status === 401) {
+          this.snack.open(' Pogrešan username ili lozinka.', 'Zatvori', { duration: 4000, panelClass: ['snack-error'] });
+        } else if (err?.status === 0) {
+          this.snack.open(' Server nedostupan. Provjerite vezu.', 'Zatvori', { duration: 4000, panelClass: ['snack-error'] });
+        } else {
+          const msg = err?.error?.title || err?.error?.message || ' Greška prilikom prijave.';
+          this.snack.open(msg, 'Zatvori', { duration: 4000 , panelClass: ['snack-error']});
+        }
       }
     });
 
