@@ -1,10 +1,11 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using backend.Helper.Auth;
+﻿using backend.Helper.Auth;
 using backend.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace backend.Services.Auth
 {
@@ -42,6 +43,11 @@ namespace backend.Services.Auth
 
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             return (tokenString, _options.ExpireMinutes);
+        }
+        public string GenerateRefreshToken()
+        {
+            
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         }
     }
 }
