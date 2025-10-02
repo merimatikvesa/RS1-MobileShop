@@ -44,14 +44,35 @@ namespace backend.Endpoints.Auth
             if (account == null)
                 return Unauthorized(new { errors = new[] { "Invalid username or password." } });
 
-            // Generate JWT
+            // Access Jwt token
             var (token, expiresInMinutes) = _jwt.GenerateToken(account);
+            // Refresh Jwt token 
+            var refreshTokenValue = _jwt.GenerateRefreshToken();
+            var refreshEntity = new RefreshToken
+            {
+                Token = refreshTokenValue,
+                AccountId = account.AccountId,          
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.RefreshTokens.Add(refreshEntity);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            Response.Cookies.Append("refreshToken", refreshTokenValue, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = refreshEntity.ExpiresAt
+            });
 
             var response = new LoginResponseDto
             {
                 Token = token,
                 Username = account.Username,
-                ExpiresInMinutes = expiresInMinutes
+                ExpiresInMinutes = expiresInMinutes,
+                RefreshToken = refreshTokenValue
             };
 
             return Ok(response);
