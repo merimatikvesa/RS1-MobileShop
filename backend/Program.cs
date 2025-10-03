@@ -78,7 +78,8 @@ builder.Services.AddCors(opt =>
     opt.AddPolicy("frontend", p =>
         p.WithOrigins("http://localhost:4200")
          .AllowAnyHeader()
-         .AllowAnyMethod());
+         .AllowAnyMethod()
+         .AllowCredentials());
 });
 
 var app = builder.Build();
