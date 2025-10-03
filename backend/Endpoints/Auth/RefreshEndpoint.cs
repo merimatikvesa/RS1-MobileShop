@@ -25,13 +25,14 @@ namespace backend.Endpoints.Auth
             RefreshRequestDto request,
             CancellationToken cancellationToken = default)
         {
-            if (string.IsNullOrWhiteSpace(request.RefreshToken))
-                return BadRequest(new { errors = new[] { "Refresh token is required." } });
+            if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken) ||
+            string.IsNullOrWhiteSpace(refreshToken))
+                return Unauthorized(new { errors = new[] { "Missing refresh token cookie." } });
 
             var refreshEntity = await _db.RefreshTokens
                 .Include(r => r.Account)
                 .FirstOrDefaultAsync(
-                    r => r.Token == request.RefreshToken && r.RevokedAt == null,
+                    r => r.Token == refreshToken && r.RevokedAt == null,
                     cancellationToken);
 
             if (refreshEntity == null || refreshEntity.ExpiresAt <= DateTime.UtcNow)
@@ -43,23 +44,28 @@ namespace backend.Endpoints.Auth
             refreshEntity.RevokedAt = DateTime.UtcNow;
 
             var newRefreshValue = _jwt.GenerateRefreshToken();
-            var newRefreshEntity = new RefreshToken
+            _db.RefreshTokens.Add(new RefreshToken
             {
                 Token = newRefreshValue,
                 AccountId = refreshEntity.AccountId,
                 ExpiresAt = DateTime.UtcNow.AddDays(7),
                 CreatedAt = DateTime.UtcNow
-            };
-
-            _db.RefreshTokens.Add(newRefreshEntity);
+            });
             await _db.SaveChangesAsync(cancellationToken);
+
+            Response.Cookies.Append("refreshToken", newRefreshValue, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
 
             return Ok(new LoginResponseDto
             {
                 Token = newAccess,
                 Username = refreshEntity.Account.Username,
-                ExpiresInMinutes = expiresInMinutes,
-                RefreshToken = newRefreshValue
+                ExpiresInMinutes = expiresInMinutes
             });
         }
     }

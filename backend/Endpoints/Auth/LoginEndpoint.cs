@@ -71,8 +71,7 @@ namespace backend.Endpoints.Auth
             {
                 Token = token,
                 Username = account.Username,
-                ExpiresInMinutes = expiresInMinutes,
-                RefreshToken = refreshTokenValue
+                ExpiresInMinutes = expiresInMinutes
             };
 
             return Ok(response);
