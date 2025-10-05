@@ -12,10 +12,15 @@ namespace backend.Services.Auth
     public class JwtService : IJwtService
     {
         private readonly JwtOptions _options;
-
-        public JwtService(IOptions<JwtOptions> options)
+        private readonly string _signingKey;
+        public JwtService(IOptions<JwtOptions> options, IConfiguration configuration)
         {
             _options = options.Value;
+            _signingKey = configuration["Jwt:Key"]
+                          ?? throw new InvalidOperationException("JWT Key not found in configuration.");
+
+            if (_signingKey.Length < 16)
+                throw new InvalidOperationException("JWT Key too short — must be at least 16 characters.");
         }
 
         public (string token, int expiresInMinutes) GenerateToken(Account account)
