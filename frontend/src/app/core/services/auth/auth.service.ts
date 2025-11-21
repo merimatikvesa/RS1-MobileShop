@@ -34,6 +34,17 @@ export class AuthService {
   getRefreshToken(): string | null {
     return localStorage.getItem('refreshToken');
   }
+  
+  refresh(): Observable<LoginResponseDto> {
+  return this.http.post<LoginResponseDto>(`${this.apiUrl}/auth/refresh`, {}).pipe(
+    tap((response: LoginResponseDto) => {
+      // Spremamo novi token
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('username', response.username);
+    })
+  );
+  }
+
 
   logout():void {
   localStorage.removeItem('token');
