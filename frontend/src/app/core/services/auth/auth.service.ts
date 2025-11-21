@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { tap, Observable } from 'rxjs';
 import { LoginRequestDto } from '../../models/auth/login-request.dto';
 import { LoginResponseDto } from '../../models/auth/login-response.dto';
 import { environment } from '../../../../evnvironments/environment';
@@ -15,7 +15,24 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(dto: LoginRequestDto): Observable<LoginResponseDto> {
-    return this.http.post<LoginResponseDto>(`${this.apiUrl}/auth/login`, dto);
+    return this.http.post<LoginResponseDto>(`${this.apiUrl}/auth/login`, dto).pipe(
+      tap((response: LoginResponseDto) => {
+        this.storeTokens(response);  
+      })
+    );
+  }
+
+   private storeTokens(tokens: LoginResponseDto): void {
+    localStorage.setItem('token', tokens.token);        // ACCESS TOKEN
+    localStorage.setItem('username', tokens.username);         // USERNAME
+  }
+
+  getAccessToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  getRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
   }
 
   logout():void {
