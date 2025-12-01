@@ -10,8 +10,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiBaseUrl; // prilagodi svom backendu
+  private apiUrl = environment.apiBaseUrl;
   private snack = inject(MatSnackBar);
+
   constructor(private http: HttpClient) {}
 
   login(dto: LoginRequestDto): Observable<LoginResponseDto> {
@@ -22,10 +23,12 @@ export class AuthService {
     );
   }
 
-   private storeTokens(tokens: LoginResponseDto): void {
-    localStorage.setItem('token', tokens.token);        // ACCESS TOKEN
-    localStorage.setItem('username', tokens.username);         // USERNAME
+  storeTokens(tokens: LoginResponseDto): void {
+    localStorage.setItem('token', tokens.token);        
+    localStorage.setItem('refreshToken', tokens.refreshToken); 
+    localStorage.setItem('username', tokens.username);         
   }
+  
 
   getAccessToken(): string | null {
     return localStorage.getItem('token');
@@ -35,19 +38,17 @@ export class AuthService {
     return localStorage.getItem('refreshToken');
   }
   
-  refresh(): Observable<LoginResponseDto> {
-  return this.http.post<LoginResponseDto>(`${this.apiUrl}/auth/refresh`, {}).pipe(
-    tap((response: LoginResponseDto) => {
-      // Spremamo novi token
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('username', response.username);
-    })
-  );
-  }
+  refresh(refreshToken?: string): Observable<LoginResponseDto> {
+  return this.http.post<LoginResponseDto>(`${this.apiUrl}/auth/refresh`, {
+    refreshToken: refreshToken || this.getRefreshToken()
+  });
+}
+
 
 
   logout():void {
   localStorage.removeItem('token');
+  localStorage.removeItem('refreshToken');
   localStorage.removeItem('username');
 
    this.snack.open('Uspješno ste se odjavili.', 'Zatvori', {

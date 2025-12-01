@@ -12,13 +12,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-var asm = Assembly.GetEntryAssembly();
-var attr = asm?.GetCustomAttribute<UserSecretsIdAttribute>();
-
-
+// Load configuration
 builder.Configuration.Sources.Clear();
-
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
@@ -26,18 +21,17 @@ builder.Configuration
 
 if (builder.Environment.IsDevelopment())
 {
-    builder.Configuration.AddUserSecrets<Program>(); // <- MORA postojati i biti u ovom projektu
+    builder.Configuration.AddUserSecrets<Program>();
 }
 
 builder.Configuration.AddEnvironmentVariables();
 
-var cfgRoot = (IConfigurationRoot)builder.Configuration;
-Console.WriteLine(">>> Config providers:");
 
 // Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Swagger + JWT auth visualization
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MobitelShop API", Version = "v1" });
@@ -45,63 +39,60 @@ builder.Services.AddSwaggerGen(c =>
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Description = "Enter JWT token like: Bearer {token}",
+        Description = "Enter JWT like: Bearer {token}",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
         BearerFormat = "JWT",
-        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+        Reference = new OpenApiReference { Id = "Bearer", Type = ReferenceType.SecurityScheme }
     };
+
     c.AddSecurityDefinition("Bearer", securityScheme);
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() }
+        { new OpenApiSecurityScheme { Reference = new OpenApiReference{ Id="Bearer", Type=ReferenceType.SecurityScheme }}, new string[]{} }
     });
 });
 
+// DB
 builder.Services.AddDbContext<MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// JWT options + DI
+// JWT
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()!;
+var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
 
-var jwtKey = builder.Configuration["Jwt:Key"];
-if (string.IsNullOrWhiteSpace(jwtKey) || jwtKey.Length < 16)
-{
-    throw new InvalidOperationException("JWT Key is missing. Set it via User Secrets: dotnet user-secrets set \"Jwt:Key\" \"<your-secret>\".");
-}
-
-var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtOptions>() ?? new JwtOptions();
-
-
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings.Issuer,
-        ValidAudience = jwtSettings.Audience,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
-    };
-});
+    
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30),
 
-builder.Services.AddCors(opt =>
+
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = signingKey
+
+         
+        };
+    });
+
+
+builder.Services.AddCors(options =>
 {
-    opt.AddPolicy("frontend", p =>
-        p.WithOrigins("http://localhost:4200")
-         .AllowAnyHeader()
+    options.AddPolicy("AllowAll", p =>
+        p.AllowAnyOrigin()
          .AllowAnyMethod()
-         .AllowCredentials());
+         .AllowAnyHeader());
 });
 
 var app = builder.Build();
@@ -114,7 +105,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("frontend");
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 

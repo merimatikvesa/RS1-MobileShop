@@ -13,7 +13,7 @@ namespace backend.Endpoints.Test
         public override async Task<ActionResult<string>> HandleAsync(
             CancellationToken cancellationToken = default)
         {
-            return Ok("You are authorized!");
+            return Ok(new { message = "You are authorized!" });
         }
     }
 }
