@@ -11,23 +11,19 @@ namespace backend.Endpoints.Auth
     public class RefreshEndpoint
     : MyEndpointBaseAsync.WithRequest<RefreshRequestDto, LoginResponseDto>
     {
-        private readonly MyDbContext _db;
-        private readonly IJwtService _jwt;
-
-        public RefreshEndpoint(MyDbContext db, IJwtService jwt)
-        {
-            _db = db;
-            _jwt = jwt;
-        }
 
         [HttpPost("api/auth/refresh")]
         public override async Task<ActionResult<LoginResponseDto>> HandleAsync(
             RefreshRequestDto request,
             CancellationToken cancellationToken = default)
         {
-            if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken) ||
-            string.IsNullOrWhiteSpace(refreshToken))
-                return Unauthorized(new { errors = new[] { "Missing refresh token cookie." } });
+            // Resolve services manually because EndpointBaseAsync does not support constructor DI
+            var _db = HttpContext.RequestServices.GetRequiredService<MyDbContext>();
+            var _jwt = HttpContext.RequestServices.GetRequiredService<IJwtService>();
+
+            var refreshToken = request.RefreshToken;
+            if (string.IsNullOrWhiteSpace(refreshToken))
+                return Unauthorized(new { errors = new[] { "Missing refresh token." } });
 
             var refreshEntity = await _db.RefreshTokens
                 .Include(r => r.Account)
@@ -42,6 +38,7 @@ namespace backend.Endpoints.Auth
             var (newAccess, expiresInMinutes) = _jwt.GenerateToken(refreshEntity.Account);
 
             refreshEntity.RevokedAt = DateTime.UtcNow;
+            _db.RefreshTokens.Update(refreshEntity);
 
             var newRefreshValue = _jwt.GenerateRefreshToken();
             _db.RefreshTokens.Add(new RefreshToken
@@ -53,17 +50,10 @@ namespace backend.Endpoints.Auth
             });
             await _db.SaveChangesAsync(cancellationToken);
 
-            Response.Cookies.Append("refreshToken", newRefreshValue, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = DateTime.UtcNow.AddDays(7)
-            });
-
             return Ok(new LoginResponseDto
             {
                 Token = newAccess,
+                RefreshToken = newRefreshValue,
                 Username = refreshEntity.Account.Username,
                 ExpiresInMinutes = expiresInMinutes
             });

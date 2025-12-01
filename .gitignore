@@ -4,7 +4,6 @@
 *.suo
 *.ntvs*
 *.njsproj
-*.sln*
 *.csproj.user
 
 # Ignore build outputs

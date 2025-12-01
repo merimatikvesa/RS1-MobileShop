@@ -16,16 +16,18 @@ namespace backend.Services.Auth
         public JwtService(IOptions<JwtOptions> options, IConfiguration configuration)
         {
             _options = options.Value;
+
             _signingKey = configuration["Jwt:Key"]
                           ?? throw new InvalidOperationException("JWT Key not found in configuration.");
-
+            Console.WriteLine(">>> SIGNING KEY = " + _signingKey);
             if (_signingKey.Length < 16)
                 throw new InvalidOperationException("JWT Key too short — must be at least 16 characters.");
         }
 
         public (string token, int expiresInMinutes) GenerateToken(Account account)
         {
-            var keyBytes = Encoding.UTF8.GetBytes(_options.Key);
+
+            var keyBytes = Encoding.UTF8.GetBytes(_signingKey);
             var securityKey = new SymmetricSecurityKey(keyBytes);
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 

@@ -59,17 +59,12 @@ namespace backend.Endpoints.Auth
             _db.RefreshTokens.Add(refreshEntity);
             await _db.SaveChangesAsync(cancellationToken);
 
-            Response.Cookies.Append("refreshToken", refreshTokenValue, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
-                Expires = refreshEntity.ExpiresAt
-            });
+          
 
             var response = new LoginResponseDto
             {
                 Token = token,
+                RefreshToken = refreshTokenValue,
                 Username = account.Username,
                 ExpiresInMinutes = expiresInMinutes
             };
