@@ -9,12 +9,15 @@ namespace backend.Models
         [Required]
         [MaxLength(50)]
         public string Email { get; set; }
+
         [Required]
-        public string PhoneNumber { get; set; }
-        public int CityId { get; set; }
-        public City City { get; set; }
-        public int GenderId { get; set; }
-        public Gender Gender { get; set; }
+        [MaxLength(100)]
+        public string FullName { get; set; }
+        public string? PhoneNumber { get; set; }
+        public int? CityId { get; set; }
+        public City? City { get; set; }
+        public int? GenderId { get; set; }
+        public Gender? Gender { get; set; }
         public int AccountId { get; set; }
         public Account Account { get; set; }
 

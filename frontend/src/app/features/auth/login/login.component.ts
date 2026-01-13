@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { LoginRequestDto } from '../../../core/models/auth/login-request.dto';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -19,7 +19,7 @@ export class LoginComponent {
   private route = inject(ActivatedRoute)
   private authService = inject(AuthService);
   private snack = inject(MatSnackBar);
-  
+
 
   loading = false;
   errorMsg = '';
@@ -41,7 +41,7 @@ export class LoginComponent {
     this.authService.login(payload).subscribe({
       next: (res) => {
         console.log('Login success:', res);
-      
+
         //saving token and username in LocalStorage
       localStorage.setItem('token', res.token);
       localStorage.setItem('username', res.username);

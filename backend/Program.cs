@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using backend.Endpoints.Auth;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -108,7 +110,10 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
+
+
+
+
 
 app.Run();
