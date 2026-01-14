@@ -1,13 +1,153 @@
-.login-form { max-width: 360px; margin: 40px auto; display: grid; gap: 12px; }
-label { display: grid; gap: 6px; }
-input { padding: 8px; border: 1px solid #ddd; border-radius: 6px; }
-button { padding: 10px; border: none; border-radius: 8px; cursor: pointer; }
-.error { color: #b00020; font-size: 12px; }
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+/* STEP WRAPPER */
+.login-form {
+  width: 100%;
+  max-width: 520px;
+  padding: 2.5rem 3rem;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* HEADINGS */
+h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.step-content {
+  width: 100%;
+  margin-bottom: 1.2rem;
+}
+
+.step-content label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.step-content input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+}
+
+input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ERROR TEXT */
+.error {
+  margin-top: -0.6rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #dc2626;
+}
+
+/* ACTION BUTTONS */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.8rem;
+}
+
+/* PRIMARY BUTTON (NEXT / LOGIN) */
+button[mat-raised-button] {
+  min-width: 120px;
+  padding: 0.6rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 999px;
+  background-color: #2563eb;
+  color: #ffffff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button[mat-raised-button]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+}
+
+button[mat-raised-button]:disabled {
+  opacity: 0.6;
+  box-shadow: none;
+  transform: none;
+}
+
+/* BACK BUTTON */
+button[mat-button] {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+/* REGISTER LINK */
+.helper {
+  margin-top: 1.8rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
 .register-button {
-  background-color: #1976d2;
-  color: white;
+  background: none;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+  color: #2563eb;
+  font-weight: 600;
   cursor: pointer;
 }
+
+.register-button:hover {
+  text-decoration: underline;
+}
+.forgot-link {
+  color: #2563eb;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+
+/* STEP HEADER CLEANUP (optional – makes it cleaner) */
+::ng-deep .mat-horizontal-stepper-header {
+  pointer-events: none;
+}
+
+::ng-deep .mat-step-header {
+  background: transparent !important;
+}
+
+::ng-deep .mat-step-icon {
+  background-color: #2563eb;
+}
+
+::ng-deep .mat-step-icon-selected {
+  background-color: #2563eb;
+}
+::ng-deep .mat-step-header:hover {
+  background: transparent !important;
+}
+
+/* SKROZ sakrij stepper header (1, 2 i liniju) */
+::ng-deep .mat-horizontal-stepper-header-container {
+  display: none !important;
+}
+

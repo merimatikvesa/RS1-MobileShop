@@ -5,11 +5,21 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 import { LoginRequestDto } from '../../../core/models/auth/login-request.dto';
 import { ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, RouterLink],
+  imports: 
+  [CommonModule, 
+  ReactiveFormsModule, 
+  MatSnackBarModule, 
+  RouterLink,  
+  MatStepperModule,
+  MatInputModule,
+  MatButtonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -20,23 +30,44 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private snack = inject(MatSnackBar);
 
+  usernameForm = this.fb.group({
+    username: ['', Validators.required]
+  });
+
+  passwordForm = this.fb.group({
+    password: ['', Validators.required]
+  });
 
   loading = false;
   errorMsg = '';
 
-  form: FormGroup = this.fb.group({
-    username: ['', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-  });
-
-  submit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+  loginWizard(): void {
+    if (this.usernameForm.invalid || this.passwordForm.invalid) {
+      this.usernameForm.markAllAsTouched();
+      this.passwordForm.markAllAsTouched();
       return;
     }
 
+
+ // form: FormGroup = this.fb.group({
+ //   username: ['', Validators.required],
+ //   password: ['', [Validators.required, Validators.minLength(6)]],
+ // });
+
+ // submit() {
+ //   if (this.form.invalid) {
+ //     this.form.markAllAsTouched();
+ //     return;
+ //   }
+
     this.loading = true;
-    const payload: LoginRequestDto = this.form.value;
+
+    const payload: LoginRequestDto = {
+      username: this.usernameForm.value.username!,
+      password: this.passwordForm.value.password!
+    };
+   
+    // const payload: LoginRequestDto = this.form.value;
 
     this.authService.login(payload).subscribe({
       next: (res) => {
@@ -68,5 +99,5 @@ export class LoginComponent {
 
   }
 
-  get f() { return this.form.controls; }
+  //get f() { return this.form.controls; }
 }
