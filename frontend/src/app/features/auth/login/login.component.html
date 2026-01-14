@@ -1,29 +1,68 @@
-<form class="login-form" [formGroup]="form" (ngSubmit)="submit()">
-  <h2>Sign in</h2>
+<mat-horizontal-stepper class="login-form" linear>
 
-  <label>
-    Username
-    <input formControlName="username" placeholder="Enter username" />
-  </label>
-  <div class="error" *ngIf="f['username'].touched && f['username'].errors?.['required']">
-    Username is required
-  </div>
+  <!-- STEP 1-->
+  <mat-step [stepControl]="usernameForm">
+    <form [formGroup]="usernameForm">
+      <h2>Sign in</h2>
+      <div class="step-content">
+        <label>Email</label>
+        <input formControlName="username" placeholder="Enter Email" />
+      
+      </div>
 
-  <label>
-    Password
-    <input type="password" formControlName="password" placeholder="Enter password" />
-  </label>
-  <div class="error" *ngIf="f['password'].touched && f['password'].errors?.['required']">
-    Password is required
-  </div>
-  <div class="error" *ngIf="f['password'].touched && f['password'].errors?.['minlength']">
-    Minimum 6 characters
-  </div>
+      <div class="error"
+           *ngIf="usernameForm.get('username')?.touched && usernameForm.get('username')?.hasError('required')">
+        Email is required
+      </div>
 
-  <button type="submit" [disabled]="loading || form.invalid">Login</button>
-  <p>
-    Don't have an account?
-    <button type="button" routerLink="/register" class="register-button">Register</button>
-  </p>
-  <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
-</form>
+      <div class="actions">
+        <button mat-raised-button color="primary"
+                matStepperNext
+                [disabled]="usernameForm.invalid">
+          Next
+        </button>
+      </div>
+
+      <p class="helper">
+        Don't have an account?
+        <button type="button" routerLink="/register" class="register-button">Register</button>
+      </p>
+    </form>
+  </mat-step>
+
+
+  <!-- STEP 2 -->
+  <mat-step [stepControl]="passwordForm">
+    <form [formGroup]="passwordForm">
+      <h2>Enter password</h2>
+      <div class="step-content">
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="Enter password" />
+      </div>
+
+      <div class="error"
+           *ngIf="passwordForm.get('password')?.touched && passwordForm.get('password')?.hasError('required')">
+        Password is required
+      </div>
+
+      <div class="actions">
+        <button mat-button matStepperPrevious type="button">
+          Back
+        </button>
+
+        <button mat-raised-button color="accent"
+                type="button"
+                (click)="loginWizard()"
+                [disabled]="loading || passwordForm.invalid">
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
+      </div>
+
+      <p class="helper">
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </p>
+
+    </form>
+  </mat-step>
+
+</mat-horizontal-stepper>
