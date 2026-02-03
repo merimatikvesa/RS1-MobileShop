@@ -1,0 +1,14 @@
+{
+  "LOGIN": {
+    "TITLE": "Prijava",
+    "USERNAME": "Korisničko ime",
+    "PASSWORD": "Lozinka",
+    "NEXT": "Dalje",
+    "BACK": "Nazad",
+    "SUBMIT": "Prijavi se",
+    "REGISTER_TEXT": "Nemate račun?",
+    "REGISTER_BTN": "Registruj se",
+    "FORGOT": "Zaboravljena lozinka?",
+    "PASSWORD_LBL": "Unesite lozinku"
+  }
+}
