@@ -1,12 +1,24 @@
+
+<div>
+  <div style="display:inline-flex; justify-content:right; gap:8px; margin-bottom:12px;">
+  <button mat-stroked-button type="button"
+          (click)="setLang('bs')"
+          [disabled]="currentLang === 'bs'">BS</button>
+
+  <button mat-stroked-button type="button"
+          (click)="setLang('en')"
+          [disabled]="currentLang === 'en'">EN</button>
+</div>
 <mat-horizontal-stepper class="login-form" linear>
+
 
   <!-- STEP 1-->
   <mat-step [stepControl]="usernameForm">
     <form [formGroup]="usernameForm">
-      <h2>Sign in</h2>
+      <h2>{{ 'LOGIN.TITLE' | translate }}</h2>
       <div class="step-content">
         <label>Email</label>
-        <input formControlName="username" placeholder="Enter Email" />
+        <input formControlName="username" placeholder="Email" />
       
       </div>
 
@@ -19,13 +31,13 @@
         <button mat-raised-button color="primary"
                 matStepperNext
                 [disabled]="usernameForm.invalid">
-          Next
+          {{ 'LOGIN.NEXT' | translate }}
         </button>
       </div>
 
       <p class="helper">
-        Don't have an account?
-        <button type="button" routerLink="/register" class="register-button">Register</button>
+        {{'LOGIN.REGISTER_TEXT' | translate}}
+        <button type="button" routerLink="/register" class="register-button">{{'LOGIN.REGISTER_BTN' | translate}}</button>
       </p>
     </form>
   </mat-step>
@@ -34,9 +46,9 @@
   <!-- STEP 2 -->
   <mat-step [stepControl]="passwordForm">
     <form [formGroup]="passwordForm">
-      <h2>Enter password</h2>
+      <h2>{{'LOGIN.PASSWORD.LBL' | translate}}</h2>
       <div class="step-content">
-        <label>Password</label>
+        <label>{{'LOGIN.PASSWORD' | translate}}</label>
         <input type="password" formControlName="password" placeholder="Enter password" />
       </div>
 
@@ -47,7 +59,7 @@
 
       <div class="actions">
         <button mat-button matStepperPrevious type="button">
-          Back
+          {{'LOGIN.BACK' | translate}}
         </button>
 
         <button mat-raised-button color="accent"
@@ -59,10 +71,12 @@
       </div>
 
       <p class="helper">
-        <a href="#" class="forgot-link">Forgot password?</a>
+        <a href="#" class="forgot-link">{{'LOGIN.FORGOT' | translate}}</a>
       </p>
 
     </form>
   </mat-step>
 
 </mat-horizontal-stepper>
+
+</div>

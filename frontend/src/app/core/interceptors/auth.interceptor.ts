@@ -11,9 +11,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (req.url.includes('/auth/refresh')) {
-    return next(req);
-  }
+  if (req.url.includes('/auth/refresh') || 
+      req.url.includes('/auth/login') ||
+      req.url.includes('/auth/register')) 
+      {
+        return next(req);
+      }
 
   // Add access token
   const token = authService.getAccessToken();

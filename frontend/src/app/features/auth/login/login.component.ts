@@ -8,6 +8,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-login',
@@ -19,16 +21,33 @@ import { MatButtonModule } from '@angular/material/button';
   RouterLink,  
   MatStepperModule,
   MatInputModule,
-  MatButtonModule],
+  MatButtonModule,
+  TranslateModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
+
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute)
   private authService = inject(AuthService);
   private snack = inject(MatSnackBar);
+
+  private translate = inject(TranslateService);
+
+  currentLang: 'bs' | 'en' = (localStorage.getItem('lang') as 'bs' | 'en') || 'bs';
+
+  constructor() {
+    this.translate.setDefaultLang('bs');
+    this.translate.use(this.currentLang);
+  }
+
+  setLang(lang: 'bs' | 'en') {
+    this.currentLang = lang;
+    localStorage.setItem('lang', lang);
+    this.translate.use(lang);
+  }
 
   usernameForm = this.fb.group({
     username: ['', Validators.required]

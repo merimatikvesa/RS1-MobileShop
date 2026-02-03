@@ -1,0 +1,14 @@
+{
+  "LOGIN": {
+    "TITLE": "Sign in",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "NEXT": "Next",
+    "BACK": "Back",
+    "SUBMIT": "Login",
+    "REGISTER_TEXT": "Don't have an account?",
+    "REGISTER_BTN": "Register",
+    "FORGOT": "Forgot password?",
+    "PASSWORD_LBL": "Enter password"
+  }
+}
