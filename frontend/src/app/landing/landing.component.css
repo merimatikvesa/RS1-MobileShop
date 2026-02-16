@@ -1,0 +1,65 @@
+
+#header {
+  position: absolute !important;
+  top: 0 !important;
+  background-color: transparent;
+}
+#header .h1, li {color: white;}
+#header .button {background-color: #647db9 !important;}
+#banner .goto-next:before {
+  filter: invert(33%) sepia(86%) saturate(1500%) hue-rotate(190deg) brightness(95%) contrast(95%) !important;
+}
+#banner {
+  height: 100vh;
+  background-image: url('/assets/landing/images/pic01.jpg') !important;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative !important;
+}
+#banner::after {
+  background: none !important;
+}
+
+
+#page-wrapper,
+#main,
+body {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+#two .content {background-color: #647db96e !important;}
+#three .content {background-color: #647db96e !important;}
+#footer {background-color: #3763ca !important;}
+#footer .icons .icon.alt:before {background-color: #3763ca !important;}
+.icons a {
+  color: #3763CA !important;
+}
+
+#four{
+    background-color: #769df8 !important;
+}
+#four .major:after{
+    background-color: #3763CA;
+}
+
+.button:hover {
+  
+  box-shadow: inset 0 0 0 2px #1e4fa3 !important;
+  color: #1e4fa3 !important;
+}
+#header a:hover{
+    color:  #a9bfe4 !important;
+}
+#four .icon.major {
+  background-color: white !important;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+ 
+}
+#four .icon.major:before {
+  color: #3763CA !important; 
+}
+#footer .icon:before {
+  color: #3763CA !important;  
+  border: white;
+}
