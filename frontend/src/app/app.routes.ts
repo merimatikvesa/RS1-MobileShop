@@ -1,8 +1,12 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { LandingComponent } from './landing/landing.component';
 
 export const routes: Routes = [
   //public
+  {
+    path: '', component: LandingComponent
+  },
   {
     path: 'products',
     loadComponent: () =>
