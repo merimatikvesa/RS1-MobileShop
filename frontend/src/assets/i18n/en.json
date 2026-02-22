@@ -10,5 +10,29 @@
     "REGISTER_BTN": "Register",
     "FORGOT": "Forgot password?",
     "PASSWORD_LBL": "Enter password"
+  },
+
+  "REGISTER": {
+    "TITLE": "Create account",
+    "SUBTITLE": "Join our Mobile Shop platform",
+    "FULL_NAME": "Full name",
+    "EMAIL": "Email",
+    "PASSWORD": "Password",
+    "CONFIRM_PASSWORD": "Confirm password",
+    "SUBMIT": "Register",
+    "LOADING": "Creating account...",
+    "HAVE_ACCOUNT": "Already have an account?",
+    "LOGIN": "Login"
+  },
+
+  "ERRORS": {
+    "FULL_NAME_REQUIRED": "Full name is required",
+    "FULL_NAME_MIN": "Full name must be at least 3 characters",
+    "FULL_NAME_PATTERN": "Full name can contain only letters",
+    "EMAIL_REQUIRED": "Email is required",
+    "EMAIL_INVALID": "Invalid email address",
+    "PASSWORD_REQUIRED": "Password is required",
+    "PASSWORD_MIN": "Password must be at least 8 characters",
+    "PASSWORD_MISMATCH": "Passwords do not match"
   }
 }

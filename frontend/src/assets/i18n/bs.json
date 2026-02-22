@@ -10,5 +10,31 @@
     "REGISTER_BTN": "Registruj se",
     "FORGOT": "Zaboravljena lozinka?",
     "PASSWORD_LBL": "Unesite lozinku"
+  },
+
+  "REGISTER": {
+    "TITLE": "Kreiranje računa",
+    "SUBTITLE": "Pridružite se Mobile Shop platformi",
+    "FULL_NAME": "Ime i prezime",
+    "EMAIL": "Email",
+    "PASSWORD": "Lozinka",
+    "CONFIRM_PASSWORD": "Potvrda lozinke",
+    "SUBMIT": "Registruj se",
+    "LOADING": "Kreiranje računa...",
+    "HAVE_ACCOUNT": "Već imate račun?",
+    "LOGIN": "Prijava"
+  },
+
+  "ERRORS": {
+    "FULL_NAME_REQUIRED": "Ime i prezime je obavezno",
+    "FULL_NAME_MIN": "Ime i prezime mora imati najmanje 3 slova",
+    "FULL_NAME_PATTERN": "Ime i prezime mora sadržavati samo slova",
+    "EMAIL_REQUIRED": "Email je obavezan",
+    "EMAIL_INVALID": "Neispravna email adresa",
+    "PASSWORD_REQUIRED": "Lozinka je obavezna",
+    "PASSWORD_MIN": "Lozinka mora imati najmanje 8 karaktera",
+    "PASSWORD_MISMATCH": "Lozinke se ne podudaraju"
   }
 }
+
+
