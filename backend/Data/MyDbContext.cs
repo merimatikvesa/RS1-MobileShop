@@ -47,6 +47,93 @@ namespace backend.Data
             modelBuilder.Entity<AuthToken>()
                 .HasIndex(t => t.Value)
                 .IsUnique();
+
+           modelBuilder.Entity<Brand>().HasData(
+            new Brand
+            {
+                BrandId = 1,
+                Name = "Apple"
+            },
+            new Brand
+            {
+                BrandId = 2,
+                Name = "Samsung"
+            }
+            );
+
+            modelBuilder.Entity<Category>().HasData(
+            new Category
+            {
+                CategoryId = 1,
+                Name = "Smartphones"
+            }
+            );
+
+            modelBuilder.Entity<Supplier>().HasData(
+            new Supplier
+            {
+                SupplierId = 1,
+                SupplierName = "Main Supplier",
+                PhoneNumber = "+38761111222",
+                Address = "Sarajevo, BiH"
+            }
+            );
+
+
+            modelBuilder.Entity<Product>().HasData(
+            new Product
+            {
+                ProductId = 1,
+                ProductName = "iPhone 14",
+                Model = "A2882",
+                Price = 999,
+                BrandId = 1,       
+                SupplierId = 1,
+                CategoryId = 1,   
+                PromotionId = null
+            },
+            new Product
+            {
+                ProductId = 2,
+                ProductName = "iPhone 13",
+                Model = "A2633",
+                Price = 799,
+                BrandId = 1,
+                SupplierId = 1,
+                CategoryId = 1,
+                PromotionId = null
+            },
+            new Product
+            {
+                ProductId = 3,
+                ProductName = "Samsung Galaxy S23",
+                Model = "SM-S911B",
+                Price = 899,
+                BrandId = 2,       
+                SupplierId = 1,
+                CategoryId = 1,
+                PromotionId = null
+            },
+            new Product
+            {
+                ProductId = 4,
+                ProductName = "Samsung Galaxy A54",
+                Model = "SM-A546B",
+                Price = 449,
+                BrandId = 2,
+                SupplierId = 1,
+                CategoryId = 1,
+                PromotionId = null
+            }
+            );
+
+
+
+
+
+
+
+
         }
     }
 }
