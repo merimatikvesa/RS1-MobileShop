@@ -43,9 +43,14 @@ namespace backend.Endpoints.Auth
 
             if (account == null)
                 return Unauthorized(new { errors = new[] { "Invalid username or password." } });
+            
+            var isAdmin = await _db.Administrators
+            .AnyAsync(a => a.AccountId == account.AccountId, cancellationToken);
+
+            var role = isAdmin ? "Admin" : "User";
 
             // Access Jwt token
-            var (token, expiresInMinutes) = _jwt.GenerateToken(account);
+            var (token, expiresInMinutes) = _jwt.GenerateToken(account, role);
             // Refresh Jwt token 
             var refreshTokenValue = _jwt.GenerateRefreshToken();
             var refreshEntity = new RefreshToken

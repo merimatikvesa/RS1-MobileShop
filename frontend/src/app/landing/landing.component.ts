@@ -1,14 +1,24 @@
 import { AfterViewInit, Component } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../core/services/auth/auth.service';
 declare const $: any;
 
 @Component({
   selector: 'app-landing',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
 export class LandingComponent implements AfterViewInit {
+  constructor(public auth: AuthService, private router: Router) {}
+
+  logout() {
+    this.auth.logout();
+    this.router.navigateByUrl('/');
+  }
+  
   ngAfterViewInit(): void {
     // re-load template scripts AFTER the landing HTML exists
     this.loadScripts([

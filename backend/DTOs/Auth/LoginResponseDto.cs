@@ -6,5 +6,7 @@
         public string RefreshToken { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public int ExpiresInMinutes { get; set; }
+        public string Role { get; set; }
+
     }
 }

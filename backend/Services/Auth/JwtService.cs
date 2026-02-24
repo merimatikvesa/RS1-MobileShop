@@ -24,7 +24,7 @@ namespace backend.Services.Auth
                 throw new InvalidOperationException("JWT Key too short — must be at least 16 characters.");
         }
 
-        public (string token, int expiresInMinutes) GenerateToken(Account account)
+        public (string token, int expiresInMinutes) GenerateToken(Account account, string role)
         {
 
             var keyBytes = Encoding.UTF8.GetBytes(_signingKey);
@@ -36,7 +36,7 @@ namespace backend.Services.Auth
                 new(JwtRegisteredClaimNames.Sub, account.AccountId.ToString()),
                 new(JwtRegisteredClaimNames.UniqueName, account.Username),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                
+                new(ClaimTypes.Role, role)
             };
 
             var token = new JwtSecurityToken(
