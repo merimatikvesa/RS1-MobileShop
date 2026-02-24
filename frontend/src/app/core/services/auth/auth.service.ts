@@ -1,11 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap, Observable } from 'rxjs';
+import { tap, Observable, BehaviorSubject } from 'rxjs';
 import { LoginRequestDto } from '../../models/auth/login-request.dto';
 import { LoginResponseDto } from '../../models/auth/login-response.dto';
 import { environment } from '../../../../evnvironments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {RegisterRequestDto} from '../../models/auth/register-request.dto';
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +15,8 @@ import {RegisterRequestDto} from '../../models/auth/register-request.dto';
 export class AuthService {
   private apiUrl = environment.apiBaseUrl;
   private snack = inject(MatSnackBar);
+  private loggedIn$ = new BehaviorSubject<boolean>(!!localStorage.getItem('token'));
+  private username$ = new BehaviorSubject<string>(localStorage.getItem('username') ?? '');
 
   constructor(private http: HttpClient) {}
 
@@ -30,10 +34,15 @@ export class AuthService {
     );
   }
 
+
+
   storeTokens(tokens: LoginResponseDto): void {
     localStorage.setItem('token', tokens.token);
     localStorage.setItem('refreshToken', tokens.refreshToken);
     localStorage.setItem('username', tokens.username);
+
+    this.loggedIn$.next(true);
+    this.username$.next(tokens.username);
   }
 
 
@@ -58,10 +67,28 @@ export class AuthService {
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('username');
 
-    // Show a success notification after successful logout
+    this.loggedIn$.next(false);
+    this.username$.next('');
     this.snack.open('You have been successfully logged out.', 'Close', {
       duration: 3000,
       panelClass: ['snack-success']
     });
 }
+  isLoggedIn(): boolean {
+  return this.loggedIn$.value; 
+}
+
+  getUsername(): string {
+  return this.username$.value;
+}
+
+
+  loggedInChanges() {
+  return this.loggedIn$.asObservable();
+}
+
+  usernameChanges() {
+  return this.username$.asObservable();
+}
+
 }

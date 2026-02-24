@@ -34,8 +34,14 @@ namespace backend.Endpoints.Auth
             if (refreshEntity == null || refreshEntity.ExpiresAt <= DateTime.UtcNow)
                 return Unauthorized(new { errors = new[] { "Invalid or expired refresh token." } });
 
-           
-            var (newAccess, expiresInMinutes) = _jwt.GenerateToken(refreshEntity.Account);
+
+            var isAdmin = await _db.Administrators
+            .AnyAsync(a => a.AccountId == refreshEntity.Account.AccountId, cancellationToken);
+
+            var role = isAdmin ? "Admin" : "User";
+
+            var (newAccess, expiresInMinutes) = _jwt.GenerateToken(refreshEntity.Account, role);
+
 
             refreshEntity.RevokedAt = DateTime.UtcNow;
             _db.RefreshTokens.Update(refreshEntity);

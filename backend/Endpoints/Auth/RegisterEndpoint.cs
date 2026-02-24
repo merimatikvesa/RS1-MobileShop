@@ -83,7 +83,9 @@ namespace backend.Endpoints.Auth
             await _db.SaveChangesAsync(cancellationToken);
 
             // Generate JWT + Refresh Token
-            var (token, expiresInMinutes) = _jwt.GenerateToken(account);
+            var role = "User";
+            var (token, expiresInMinutes) = _jwt.GenerateToken(account, role);
+
             var refreshTokenValue = _jwt.GenerateRefreshToken();
 
             var refreshEntity = new RefreshToken
