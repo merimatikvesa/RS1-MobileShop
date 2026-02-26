@@ -25,7 +25,7 @@ namespace backend.Endpoints.Inventories
                 return BadRequest(new { error = "Product does not exist." });
             }
 
-            // Check if Inventory already exists
+            // Check if inventory already exists
             var inventoryExists = await db.Inventory
                 .AnyAsync(i => i.ProductId == request.ProductId, cancellationToken);
 

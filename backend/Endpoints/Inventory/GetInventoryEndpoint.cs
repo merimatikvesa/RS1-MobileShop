@@ -4,18 +4,47 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using backend.Helper;
 
+
 namespace backend.Endpoints.Inventories
 {
     [AllowAnonymous]
     public class GetInventoryEndpoint(MyDbContext db)
-        : MyEndpointBaseAsync.WithoutRequest<object>
+        : MyEndpointBaseAsync.WithRequest<GetInventoryFilterRequest, object>
     {
         [HttpGet("api/inventory")]
         public override async Task<ActionResult<object>> HandleAsync(
-            CancellationToken cancellationToken = default)
+        [FromQuery] GetInventoryFilterRequest request,
+         CancellationToken cancellationToken = default)
         {
-            var inventory = await db.Inventory
+            // BE validation
+            if (request.MinQuantity < 0 || request.MaxQuantity < 0)
+                return BadRequest("Quantity cannot be negative.");
+
+            if (request.MinQuantity > request.MaxQuantity)
+                return BadRequest("MinQuantity cannot be greater than MaxQuantity.");
+
+            var query = db.Inventory
                 .Include(i => i.Product)
+                .AsQueryable();
+
+            // Filters (5)
+            if (request.ProductId.HasValue)
+                query = query.Where(i => i.ProductId == request.ProductId);
+
+            if (request.MinQuantity.HasValue)
+                query = query.Where(i => i.QuantityInStock >= request.MinQuantity);
+
+            if (request.MaxQuantity.HasValue)
+                query = query.Where(i => i.QuantityInStock <= request.MaxQuantity);
+
+            if (!string.IsNullOrWhiteSpace(request.ProductName))
+                query = query.Where(i =>
+                    i.Product.ProductName.Contains(request.ProductName));
+
+            if (request.IsLowStock == true)
+                query = query.Where(i => i.QuantityInStock < 5);
+
+            var inventory = await query
                 .Select(i => new
                 {
                     i.ProductId,
