@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-inventory',
@@ -23,7 +24,8 @@ import { MatTableModule } from '@angular/material/table';
     MatCheckboxModule,
     MatButtonModule,
     MatProgressBarModule,
-    MatTableModule
+    MatTableModule,
+    MatPaginatorModule
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
@@ -38,6 +40,10 @@ export class InventoryComponent implements OnInit {
   editingId: number | null = null;
 
   loading = false;
+
+  totalCount=0;
+  pageNumber=1;
+  pageSize=10;
 
   showMessage(message: string, isError = false) {
     this.snackBar.open(message, 'OK', {
@@ -75,8 +81,20 @@ export class InventoryComponent implements OnInit {
   }
 // read
   loadInventory() {
-    this.inventoryService.getInventory(this.filterForm.value)
-      .subscribe(result => this.inventories = result);
+    this.inventoryService.getInventory({
+      ...this.filterForm.value,
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize
+    })
+      .subscribe((result: any) => {
+        this.inventories = result.data;
+        this.totalCount = result.totalCount;
+      });
+  }
+  onPageChange(event: any) {
+    this.pageNumber = event.pageIndex + 1; // pageIndex is 0 based
+    this.pageSize = event.pageSize;
+    this.loadInventory();
   }
 // filter
   applyFilter() {
@@ -91,7 +109,7 @@ export class InventoryComponent implements OnInit {
         true
       );
     }
-
+    this.pageNumber = 1;
     this.loadInventory();
   }
 
@@ -103,7 +121,7 @@ export class InventoryComponent implements OnInit {
       productName: '',
       isLowStock: false
     });
-
+    this.pageNumber = 1;
     this.loadInventory();
   }
   // create/update
