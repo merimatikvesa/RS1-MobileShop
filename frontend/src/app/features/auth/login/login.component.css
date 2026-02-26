@@ -43,6 +43,7 @@ h2 {
   font-size: 1rem;
   border-radius: 10px;
   border: 1px solid #d1d5db;
+  color: #000000 !important;
 }
 
 input:focus {
