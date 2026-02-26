@@ -44,7 +44,10 @@ namespace backend.Endpoints.Inventories
             if (request.IsLowStock == true)
                 query = query.Where(i => i.QuantityInStock < 5);
 
+            var totalCount = await query.CountAsync(cancellationToken);
             var inventory = await query
+                .Skip((request.PageNumber - 1)* request.PageSize)
+                .Take(request.PageSize)
                 .Select(i => new
                 {
                     i.ProductId,
@@ -54,7 +57,15 @@ namespace backend.Endpoints.Inventories
                 })
                 .ToListAsync(cancellationToken);
 
-            return Ok(inventory);
+            return Ok(new
+            {
+                data = inventory,
+                totalCount,
+                pageNumber = request.PageNumber,
+                pageSize=request.PageSize
+
+            }
+                );
         }
     }
 }

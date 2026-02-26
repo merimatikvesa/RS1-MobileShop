@@ -9,5 +9,9 @@ namespace backend.Endpoints.Inventories
         public int? MaxQuantity { get; set; }
         public string? ProductName { get; set; }
         public bool? IsLowStock { get; set; }
+
+        // paging
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 }

@@ -116,3 +116,11 @@
 
   </table>
 </section>
+
+   <!-- paginator -->
+<mat-paginator
+  [length] = "totalCount"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[10]"
+  (page) ="onPageChange($event)">
+</mat-paginator>
