@@ -32,6 +32,7 @@ namespace backend.Endpoints.Inventories
 
     public class DeleteInventoryRequest
     {
+        [FromRoute]
         public int ProductId { get; set; }
     }
 }
