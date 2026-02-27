@@ -27,7 +27,7 @@ namespace backend.Models
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
         public Inventory? Inventory { get; set; }
-        public Phone Phone { get; set; }
+        public Phone? Phone { get; set; }
 
 
     }
