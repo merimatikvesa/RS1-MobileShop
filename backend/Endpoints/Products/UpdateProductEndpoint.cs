@@ -1,0 +1,106 @@
+﻿using backend.Data;
+using backend.Helper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace backend.Endpoints.Products
+{
+    [Authorize(Roles = "Admin")]
+    public class UpdateProductEndpoint(MyDbContext db)
+        : MyEndpointBaseAsync.WithRequest<UpdateProductRequest, object>
+    {
+        [HttpPut("api/products")]
+        public override async Task<ActionResult<object>> HandleAsync(
+            UpdateProductRequest request,
+            CancellationToken cancellationToken = default)
+        {
+            // BE validation
+            if (request.ProductId <= 0)
+                return BadRequest(new { error = "Invalid ProductId." });
+
+            if (string.IsNullOrWhiteSpace(request.ProductName))
+                return BadRequest(new { error = "ProductName is required." });
+
+            if (request.ProductName.Trim().Length < 2 || request.ProductName.Trim().Length > 100)
+                return BadRequest(new { error = "ProductName must be between 2 and 100 characters." });
+
+            if (string.IsNullOrWhiteSpace(request.Model))
+                return BadRequest(new { error = "Model is required." });
+
+            if (request.Model.Trim().Length < 1 || request.Model.Trim().Length > 100)
+                return BadRequest(new { error = "Model must be between 1 and 100 characters." });
+
+            if (request.Price < 0)
+                return BadRequest(new { error = "Price cannot be negative." });
+
+            var product = await db.Products
+                .FirstOrDefaultAsync(p => p.ProductId == request.ProductId, cancellationToken);
+
+            if (product == null)
+                return NotFound(new { error = "Product not found." });
+
+            // FK existence checks
+            var brandExists = await db.Brands.AnyAsync(b => b.BrandId == request.BrandId, cancellationToken);
+            if (!brandExists) return BadRequest(new { error = "Brand does not exist." });
+
+            var categoryExists = await db.Categories.AnyAsync(c => c.CategoryId == request.CategoryId, cancellationToken);
+            if (!categoryExists) return BadRequest(new { error = "Category does not exist." });
+
+            var supplierExists = await db.Suppliers.AnyAsync(s => s.SupplierId == request.SupplierId, cancellationToken);
+            if (!supplierExists) return BadRequest(new { error = "Supplier does not exist." });
+
+            if (request.PromotionId.HasValue)
+            {
+                var promoExists = await db.Promotions.AnyAsync(p => p.PromotionId == request.PromotionId.Value, cancellationToken);
+                if (!promoExists) return BadRequest(new { error = "Promotion does not exist." });
+            }
+
+            // Optional: duplicate check (exclude current)
+            var duplicate = await db.Products.AnyAsync(p =>
+                p.ProductId != request.ProductId &&
+                p.ProductName == request.ProductName.Trim() &&
+                p.Model == request.Model.Trim(),
+                cancellationToken);
+
+            if (duplicate)
+                return BadRequest(new { error = "Another product with the same name and model already exists." });
+
+            // Update fields
+            product.ProductName = request.ProductName.Trim();
+            product.Model = request.Model.Trim();
+            product.Price = request.Price;
+            product.BrandId = request.BrandId;
+            product.CategoryId = request.CategoryId;
+            product.SupplierId = request.SupplierId;
+            product.PromotionId = request.PromotionId; // može null -> skine promociju
+
+            db.Products.Update(product);
+            await db.SaveChangesAsync(cancellationToken);
+
+            return Ok(new
+            {
+                product.ProductId,
+                product.ProductName,
+                product.Model,
+                product.Price,
+                product.BrandId,
+                product.CategoryId,
+                product.SupplierId,
+                product.PromotionId
+            });
+        }
+    }
+
+    public class UpdateProductRequest
+    {
+        public int ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public string Model { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public int BrandId { get; set; }
+        public int SupplierId { get; set; }
+        public int CategoryId { get; set; }
+        public int? PromotionId { get; set; }
+    }
+}
