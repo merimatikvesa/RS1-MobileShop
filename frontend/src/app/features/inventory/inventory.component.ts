@@ -12,6 +12,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatStepperModule } from '@angular/material/stepper';
+import { ViewChild } from '@angular/core';
+import { MatStepper } from '@angular/material/stepper';
 
 @Component({
   selector: 'app-inventory',
@@ -25,7 +28,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatButtonModule,
     MatProgressBarModule,
     MatTableModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatStepperModule
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
@@ -35,7 +39,12 @@ export class InventoryComponent implements OnInit {
   inventories: InventoryDto[] = [];
   //two forms
   filterForm!: FormGroup;
-  inventoryForm!: FormGroup;
+ // inventoryForm!: FormGroup;
+
+  productStepForm!: FormGroup;
+  inventoryStepForm!: FormGroup;
+
+  @ViewChild(MatStepper) stepper!: MatStepper;
 
   editingId: number | null = null;
 
@@ -72,8 +81,16 @@ export class InventoryComponent implements OnInit {
     });
 
     // create/update
-    this.inventoryForm = this.fb.group({
+ /*   this.inventoryForm = this.fb.group({
       productId: [null, Validators.required],
+      quantity: [null, [Validators.required, Validators.min(0)]]
+    }); */
+
+    this.productStepForm = this.fb.group({
+      productId: [null, Validators.required]
+    });
+
+    this.inventoryStepForm = this.fb.group({
       quantity: [null, [Validators.required, Validators.min(0)]]
     });
 
@@ -125,7 +142,7 @@ export class InventoryComponent implements OnInit {
     this.loadInventory();
   }
   // create/update
-  saveInventory() {
+ /* saveInventory() {
     if (this.inventoryForm.invalid) return;
 
     const dto = {
@@ -166,12 +183,69 @@ export class InventoryComponent implements OnInit {
         }
       });
     }
+  } */
+
+  submitWizard() {
+    if (this.productStepForm.invalid || this.inventoryStepForm.invalid) return;
+
+    const dto = {
+      productId: this.productStepForm.value.productId,
+      quantityInStock: this.inventoryStepForm.value.quantity
+    };
+
+    this.loading = true;
+
+    // ADD
+    if (this.editingId === null) {
+      this.inventoryService.createInventory(dto).subscribe({
+        next: () => {
+          this.showMessage('Inventory successfully created');
+          this.afterSave();
+        },
+        error: () => {
+          this.showMessage('Error creating inventory', true);
+          this.loading = false;
+        }
+      });
+    }
+    // EDIT
+    else {
+      this.inventoryService.updateInventory(this.editingId, dto).subscribe({
+        next: () => {
+          this.showMessage('Inventory successfully updated');
+          this.afterSave();
+        },
+        error: () => {
+          this.showMessage('Error updating inventory', true);
+          this.loading = false;
+        }
+      });
+    }
   }
+  //helper m
+  afterSave() {
+    this.loadInventory();
+    this.productStepForm.reset();
+    this.inventoryStepForm.reset();
+    this.editingId = null;
+    this.loading = false;
+
+    this.stepper.reset();
+  }
+
   //edit
   edit(item: any) {
     this.editingId = item.productId;
-    this.inventoryForm.patchValue({
+  /*  this.inventoryForm.patchValue({
       productId: item.productId,
+      quantity: item.quantity
+    }); */
+
+    this.productStepForm.patchValue({
+      productId: item.productId
+    });
+
+    this.inventoryStepForm.patchValue({
       quantity: item.quantity
     });
   }
@@ -193,4 +267,12 @@ export class InventoryComponent implements OnInit {
     'lastUpdated',
     'actions'
   ];
+  get completionPercent(): number {
+    if (!this.stepper) return 0;
+
+    const totalSteps = this.stepper.steps.length;
+    const completedSteps = this.stepper.selectedIndex;
+
+    return Math.round((completedSteps / totalSteps) * 100);
+  }
 }
