@@ -1,0 +1,62 @@
+<div class="shop-layout">
+  <h2 class="shop-title">Shop</h2>
+  <p class="shop-subtitle">Browse our latest products</p>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Search products</mat-label>
+    <input matInput [formControl]="searchControl" placeholder="Name or model">
+  </mat-form-field>
+
+  <!-- FILTER BAR -->
+  <mat-card class="filter-bar">
+    <div class="filter-row">
+
+      <!-- Search -->
+      <mat-form-field appearance="outline" class="filter-search">
+        <mat-label>Search products</mat-label>
+        <input matInput [formControl]="searchControl" />
+      </mat-form-field>
+
+      <!-- Category -->
+      <mat-form-field appearance="outline" class="filter-select">
+        <mat-label>Category</mat-label>
+        <mat-select>
+          <mat-option value="">All</mat-option>
+          <!-- for categories -->
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+  </mat-card>
+
+  <!-- product grid -->
+  <section class="product-grid">
+    <mat-grid-list cols="3" gutterSize="16px" rowHeight="1:1">
+      <mat-grid-tile *ngFor="let p of products">
+
+        <mat-card class="product-card">
+          <img
+            mat-card-image
+            [src]="p.imageUrl && p.imageUrl.trim() !== ''
+          ? p.imageUrl
+          : 'assets/placeholder.png'"
+            alt="{{ p.productName }}"
+          />
+
+          <mat-card-content>
+            <h3>{{ p.productName }}</h3>
+            <p>{{ p.price | currency }}</p>
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-button color="primary">
+              View
+            </button>
+          </mat-card-actions>
+        </mat-card>
+
+      </mat-grid-tile>
+    </mat-grid-list>
+  </section>
+
+</div>
