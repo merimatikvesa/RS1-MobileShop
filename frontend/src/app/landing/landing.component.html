@@ -12,7 +12,8 @@
                               <li><a routerLink="/inventory">Inventory</a></li>
                               </ul>
                             </li>
-							<li><a routerLink="/">Shop</a></li>
+              <button mat-raised-button class="nav-link-btn" routerLink="/shop"> Shop </button>
+
 							<ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
         					<li><a routerLink="/login">Sign In</a></li>
 							</ng-container>
@@ -30,7 +31,7 @@
 					<a href="#two" class="goto-next scrolly">Next</a>
 				</section>
 
-				
+
 
 			<!-- Two -->
 				<section id="two" class="spotlight style2 right">
@@ -115,5 +116,4 @@
 
 		</div>
 
-		
-	
+
