@@ -72,6 +72,15 @@ namespace backend.Endpoints.Products
             db.Products.Add(product);
             await db.SaveChangesAsync(cancellationToken);
 
+            db.Inventory.Add(new Inventory
+            {
+                ProductId = product.ProductId,
+                QuantityInStock = 0,
+                LastUpdated = DateTime.UtcNow
+            });
+
+            await db.SaveChangesAsync(cancellationToken);
+
             // Return a clean DTO-like response (not whole EF graph)
             return Ok(new
             {

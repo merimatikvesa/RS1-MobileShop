@@ -15,6 +15,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatStepperModule } from '@angular/material/stepper';
 import { ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
+import {AuthService} from '../../core/services/auth/auth.service';
+import {Router, RouterModule} from '@angular/router';
 
 @Component({
   selector: 'app-inventory',
@@ -29,7 +31,8 @@ import { MatStepper } from '@angular/material/stepper';
     MatProgressBarModule,
     MatTableModule,
     MatPaginatorModule,
-    MatStepperModule
+    MatStepperModule,
+    RouterModule
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']
@@ -67,6 +70,8 @@ export class InventoryComponent implements OnInit {
     private fb: FormBuilder,
     private inventoryService: InventoryService,
     private snackBar: MatSnackBar,
+    public auth: AuthService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -275,4 +280,8 @@ export class InventoryComponent implements OnInit {
 
     return Math.round((completedSteps / totalSteps) * 100);
   }
+logout() {
+  this.auth.logout();
+  this.router.navigate(['/']);
+}
 }
