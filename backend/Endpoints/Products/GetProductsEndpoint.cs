@@ -1,5 +1,6 @@
 ﻿using backend.Data;
 using backend.Helper;
+using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,8 @@ namespace backend.Endpoints.Products
             var query = db.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .Include(p => p.Promotion)
                 .AsQueryable();
 
             // Filters 
@@ -63,7 +66,12 @@ namespace backend.Endpoints.Products
                     p.BrandId,
                     BrandName = p.Brand.Name,         
                     p.CategoryId,
-                    CategoryName = p.Category.Name      
+                    CategoryName = p.Category.Name, 
+                    p.SupplierId,
+                    SupplierName = p.Supplier.SupplierName,
+                    p.PromotionId,
+                    PromotionName = p.Promotion.PromotionName
+
                 })
                 .ToListAsync(cancellationToken);
 

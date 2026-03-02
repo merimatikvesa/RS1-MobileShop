@@ -68,16 +68,6 @@ export class LoginComponent {
     }
 
 
- // form: FormGroup = this.fb.group({
- //   username: ['', Validators.required],
- //   password: ['', [Validators.required, Validators.minLength(6)]],
- // });
-
- // submit() {
- //   if (this.form.invalid) {
- //     this.form.markAllAsTouched();
- //     return;
- //   }
 
     this.loading = true;
 
@@ -118,5 +108,5 @@ export class LoginComponent {
 
   }
 
-  //get f() { return this.form.controls; }
+
 }

@@ -1,2 +1,128 @@
-<h2>Products (public)</h2>
-<p>Ovdje ce biti katalog</p>
+<header id="header">
+					<h1 id="logo"><a routerLink="/landing">MobileShop</a></h1>
+					<nav id="nav">
+						<ul>
+							<li><a routerLink="/">Shop</a></li>
+							<ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
+        					<li><a routerLink="/login">Sign In</a></li>
+							</ng-container>
+
+							<ng-template #loggedIn>
+        					<li><span>Hi, {{ auth.getUsername() }}!</span></li>
+        					<li><a (click)="logout()" style="cursor:pointer;">Log Out</a></li>
+      						</ng-template>
+						</ul>
+					</nav>
+				</header>
+
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+<section class="section">
+  <h2>Products filter</h2>
+
+  <form [formGroup]="filterForm" class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Search (name/model)</mat-label>
+      <input matInput formControlName="search">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+     <mat-label>Brand</mat-label>
+       <mat-select formControlName="brandId">
+         <mat-option [value]="null">All</mat-option>
+         <mat-option *ngFor="let b of brands" [value]="b.brandId">
+           {{ b.name }}
+         </mat-option>
+       </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+     <mat-label>Category</mat-label>
+       <mat-select formControlName="categoryId">
+        <mat-option [value]="null">All</mat-option>
+        <mat-option *ngFor="let c of categories" [value]="c.categoryId">
+          {{ c.name }}
+        </mat-option>
+       </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Min price</mat-label>
+      <input matInput type="number" formControlName="minPrice">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Max price</mat-label>
+      <input matInput type="number" formControlName="maxPrice">
+    </mat-form-field>
+
+    <div class="actions">
+      <button type="button" mat-raised-button color="primary" (click)="applyFilter()">Filter</button>
+      <button type="button" mat-button (click)="clearFilter()">Clear</button>
+      <button type="button" mat-raised-button color="accent" (click)="addNew()">+ Add new</button>
+    </div>
+  </form>
+</section>
+
+<hr>
+
+<section class="section">
+  <h2>Products list</h2>
+
+  <table mat-table [dataSource]="products" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="productName">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let item"> {{ item.productName }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="model">
+      <th mat-header-cell *matHeaderCellDef> Model </th>
+      <td mat-cell *matCellDef="let item"> {{ item.model }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <th mat-header-cell *matHeaderCellDef> Price </th>
+      <td mat-cell *matCellDef="let item"> {{ item.price }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="brandName">
+      <th mat-header-cell *matHeaderCellDef> Brand </th>
+      <td mat-cell *matCellDef="let item"> {{ item.brandName }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="supplierName">
+      <th mat-header-cell *matHeaderCellDef> Supplier </th>
+      <td mat-cell *matCellDef="let item"> {{ item.supplierName }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="categoryName">
+      <th mat-header-cell *matHeaderCellDef> Category </th>
+      <td mat-cell *matCellDef="let item"> {{ item.categoryName }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="promotionName">
+      <th mat-header-cell *matHeaderCellDef> Promotion </th>
+      <td mat-cell *matCellDef="let item"> {{ item.promotionName ?? '-' }} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let item">
+        <button mat-button (click)="edit(item)">Update</button>
+        <button mat-button color="warn" (click)="delete(item)">Delete</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+</section>
+
+<mat-paginator
+  [length]="totalCount"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[10, 20, 50]"
+  (page)="onPageChange($event)">
+</mat-paginator>

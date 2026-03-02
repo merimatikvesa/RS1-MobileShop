@@ -1,0 +1,28 @@
+
+:host ::ng-deep .mat-mdc-select-value,
+:host ::ng-deep .mat-mdc-select-value-text {
+  color: #000000 !important;
+}
+
+
+:host ::ng-deep .mat-mdc-select-placeholder,
+:host ::ng-deep .mat-mdc-floating-label {
+  color: #000000 !important;
+}
+
+
+:host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  color: #000000 !important;
+}
+
+
+:host ::ng-deep .mat-mdc-checkbox label,
+:host ::ng-deep .mat-mdc-checkbox .mdc-label {
+  color: #000000 !important;
+}
+
+h2{
+  color:#000000 !important;
+  padding-left: 30px;
+  padding-top: 30px;
+}

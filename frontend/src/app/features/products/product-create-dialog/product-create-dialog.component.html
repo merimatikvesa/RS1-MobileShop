@@ -1,0 +1,68 @@
+<h2>{{ data.product ? 'Edit product' : 'Add new product' }}</h2>
+
+<div mat-dialog-content style="display:grid; gap:14px; padding-top: 8px;">
+  <form [formGroup]="form" style="display:grid; gap:14px;">
+    <mat-form-field appearance="outline">
+      <mat-label>Product name</mat-label>
+      <input matInput formControlName="productName">
+      <mat-error *ngIf="form.get('productName')?.hasError('required')">Required</mat-error>
+      <mat-error *ngIf="form.get('productName')?.hasError('minlength')">Min 2 characters</mat-error>
+      <mat-error *ngIf="form.get('productName')?.hasError('maxlength')">Max 100 characters</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Model</mat-label>
+      <input matInput formControlName="model">
+      <mat-error *ngIf="form.get('model')?.hasError('required')">Required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" formControlName="price">
+      <mat-error *ngIf="form.get('price')?.hasError('required')">Required</mat-error>
+      <mat-error *ngIf="form.get('price')?.hasError('min')">Cannot be negative</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Brand</mat-label>
+      <mat-select formControlName="brandId">
+        <mat-option *ngFor="let b of data.brands" [value]="b.brandId">{{ b.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('brandId')?.hasError('required')">Required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Supplier</mat-label>
+      <mat-select formControlName="supplierId" >
+        <mat-option *ngFor="let s of data.suppliers" [value]="s.supplierId">{{ s.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('supplierId')?.hasError('required')">Required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="categoryId">
+        <mat-option *ngFor="let c of data.categories" [value]="c.categoryId">{{ c.name }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="form.get('categoryId')?.hasError('required')">Required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Promotion (optional)</mat-label>
+      <mat-select formControlName="promotionId" >
+        <mat-option [value]="null">None</mat-option>
+        <mat-option *ngFor="let p of data.promotions" [value]="p.promotionId">{{ p.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <label style="display:block; margin: 8px 0 6px;">Images (optional)</label>
+    <input type="file" multiple accept="image/*" (change)="onFilesSelected($event)" />
+
+    <mat-checkbox formControlName="isPhone">This product is a phone (add phone specs after saving)</mat-checkbox>
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()">Save</button>
+</div>
