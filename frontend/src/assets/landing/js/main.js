@@ -8,6 +8,16 @@
 
 	var	$window = $(window),
 		$body = $('body');
+		// Expose a manual init so SPA frameworks (Angular) can re-trigger animations
+         window.landingInit = window.landingInit || function () {
+         window.setTimeout(function () {
+         $body.removeClass('is-preload');
+         }, 100);
+
+         // force recalculation for scroll plugins (safe)
+         $window.trigger('scroll');
+         $window.trigger('resize');
+         };
 
 	// Breakpoints.
 		breakpoints({
@@ -19,11 +29,9 @@
 		});
 
 	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+		$window.on('load', function () {
+        if (window.landingInit) window.landingInit();
+        });
 
 	// Touch mode.
 		if (browser.mobile)
@@ -35,10 +43,10 @@
 		});
 
 	// Dropdowns.
-		$('#nav > ul').dropotron({
-			alignment: 'right',
-			hideDelay: 350
-		});
+	//	$('#nav > ul').dropotron({
+	//		alignment: 'right',
+	//		hideDelay: 350
+	//	});
 
 	// Nav.
 
