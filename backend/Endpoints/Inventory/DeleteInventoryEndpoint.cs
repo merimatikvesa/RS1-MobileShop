@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints.Inventories
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public class DeleteInventoryEndpoint(MyDbContext db)
         : MyEndpointBaseAsync.WithRequest<DeleteInventoryRequest, object>
     {

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints.Inventories
 {
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public class CreateInventoryEndpoint(MyDbContext db)
         : MyEndpointBaseAsync.WithRequest<CreateInventoryRequest, object>
     {

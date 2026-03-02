@@ -2,12 +2,13 @@
 using backend.Helper;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints.Inventories
 {
-    [AllowAnonymous]
+    [Authorize(Roles ="Admin")]
     public class UpdateInventoryEndpoint(MyDbContext db)
         : MyEndpointBaseAsync.WithRequest<UpdateInventoryRequest, object>
     {
@@ -30,11 +31,16 @@ namespace backend.Endpoints.Inventories
             }
 
             inventory.QuantityInStock = request.QuantityInStock;
-            inventory.LastUpdated = DateTime.Now;
+            inventory.LastUpdated = DateTime.UtcNow;
 
             await db.SaveChangesAsync(cancellationToken);
 
-            return Ok(inventory);
+            return Ok(new
+            {
+                inventory.ProductId,
+                inventory.QuantityInStock,
+                inventory.LastUpdated
+            });
         }
     }
 
