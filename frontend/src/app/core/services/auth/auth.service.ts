@@ -60,8 +60,6 @@ export class AuthService {
   });
 }
 
-
-
   logout():void {
   localStorage.removeItem('token');
   localStorage.removeItem('refreshToken');
@@ -82,13 +80,52 @@ export class AuthService {
   return this.username$.value;
 }
 
-
   loggedInChanges() {
   return this.loggedIn$.asObservable();
 }
 
   usernameChanges() {
   return this.username$.asObservable();
+}
+private getToken(): string | null {
+  return localStorage.getItem('token'); // ili kako ti se zove key (npr. access_token)
+}
+
+private decodePayload(token: string): any | null {
+  try {
+    const payload = token.split('.')[1];
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const json = decodeURIComponent(
+      atob(normalized)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+getUserRoles(): string[] {
+  const token = this.getToken();
+  if (!token) return [];
+
+  const payload = this.decodePayload(token);
+  if (!payload) return [];
+
+  const roleKey1 = 'role';
+  const roleKey2 = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role';
+
+  const rolesValue = payload[roleKey1] ?? payload[roleKey2];
+
+  if (!rolesValue) return [];
+  if (Array.isArray(rolesValue)) return rolesValue;
+  return [String(rolesValue)];
+}
+
+isAdmin(): boolean {
+  return this.getUserRoles().includes('Admin');
 }
 
 }

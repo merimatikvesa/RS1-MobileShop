@@ -51,6 +51,34 @@ body {
 #header a:hover{
     color:  #a9bfe4 !important;
 }
+#header .cursor:pointer{
+      color:  #a9bfe4 !important;
+
+}
+#header .hidden {
+    display: none !important; 
+}
+#header .admin-dropdown{
+  position: relative;
+  margin-right: 50px;
+}
+#header .admin-dropdown .dropdown{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 9999;
+  min-width: 180px;
+  background: rgb(100, 125, 185);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  
+  
+}
+#header .admin-dropdown:hover .dropdown,
+.admin-dropdown:focus-within .dropdown {
+  display: block;
+}
 #four .icon.major {
   background-color: white !important;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;

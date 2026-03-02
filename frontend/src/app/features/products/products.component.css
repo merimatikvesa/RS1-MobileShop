@@ -87,9 +87,34 @@ table {
 #header {
   position: relative;
   z-index: 1000;
-  background-color: #647db9;
+  background-color: rgb(100, 125, 185);
 }
 
 #header a:hover{
     color:  #a9bfe4 !important;
+}
+#header .hidden {
+    display: none !important; 
+}
+#header .admin-dropdown{
+  position: relative;
+  margin-right: 50px;
+}
+#header .admin-dropdown .dropdown{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 9999;
+  min-width: 180px;
+  background: rgb(100, 125, 185);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+ 
+ 
+  
+}
+#header .admin-dropdown:hover .dropdown,
+.admin-dropdown:focus-within .dropdown {
+  display: block;
 }
