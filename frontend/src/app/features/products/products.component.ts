@@ -1,11 +1,296 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ProductCreateDialogComponent } from './product-create-dialog/product-create-dialog.component';
+import { AuthService } from '../../core/services/auth/auth.service';
+import { Router } from '@angular/router';
+import { ProductsService } from './products.service';
+import { ProductDto } from './product.dto';
+import { BrandDto } from './brand.dto';
+import { CategoryDto } from './category.dto';
+import { SupplierDto } from './supplier.dto';
+import { PromotionDto } from './promotion.dto';
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'app-products',
-  imports: [],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatProgressBarModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSelectModule,
+    MatDialogModule,
+    RouterModule
+  ],
   templateUrl: './products.component.html',
-  styleUrl: './products.component.css'
+  styleUrls: ['./products.component.css']
 })
-export class ProductsComponent {
+export class ProductsComponent implements OnInit {
+  products: ProductDto[] = [];
+  brands: BrandDto[] = [];
+  categories: CategoryDto[] = [];
+  suppliers: SupplierDto[] = [];
+  promotions: PromotionDto[] = [];
+  filterForm!: FormGroup;
 
+  loading = false;
+
+  totalCount = 0;
+  pageNumber = 1;
+  pageSize = 10;
+
+  displayedColumns: string[] = [
+    'productName',
+    'model',
+    'price',
+    'brandName',
+    'supplierName',
+    'categoryName',
+    'promotionName',
+    'actions'
+  ];
+
+  constructor(
+    private fb: FormBuilder,
+    private productsService: ProductsService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    public auth: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.filterForm = this.fb.group({
+      search: ['', [Validators.maxLength(100)]],
+      categoryId: [null],
+      brandId: [null],
+      minPrice: [null, Validators.min(0)],
+      maxPrice: [null, Validators.min(0)]
+    });
+
+    this.loadProducts();
+    this.productsService.getBrands().subscribe(b => this.brands = b);
+    this.productsService.getCategories().subscribe(c => this.categories = c);
+    this.productsService.getSuppliers().subscribe(s=> this.suppliers = s);
+    this.productsService.getPromotions().subscribe(p=> this.promotions = p);
+    
+
+
+  }
+
+  private showMessage(message: string, isError = false) {
+    this.snackBar.open(message, 'OK', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: isError ? 'error-snackbar' : 'success-snackbar'
+    });
+  }
+
+  loadProducts() {
+   
+    const { minPrice, maxPrice, search } = this.filterForm.value;
+
+    if (search && search.trim().length > 0 && search.trim().length < 2) {
+      this.showMessage('Search must be at least 2 characters.', true);
+      return;
+    }
+
+    if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+      this.showMessage('MinPrice cannot be greater than MaxPrice.', true);
+      return;
+    }
+
+    this.loading = true;
+
+    this.productsService.getProducts({
+      ...this.filterForm.value,
+      search: search?.trim() ?? '',
+      pageNumber: this.pageNumber,
+      pageSize: this.pageSize
+    }).subscribe({
+      next: (result) => {
+        this.products = result.data;
+        this.totalCount = result.totalCount;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.showMessage('Error loading products.', true);
+        this.loading = false;
+      }
+    });
+  }
+
+  applyFilter() {
+    this.pageNumber = 1;
+    this.loadProducts();
+  }
+
+  clearFilter() {
+    this.filterForm.reset({
+      search: '',
+      categoryId: null,
+      brandId: null,
+      minPrice: null,
+      maxPrice: null
+    });
+    this.pageNumber = 1;
+    this.loadProducts();
+  }
+
+  onPageChange(event: any) {
+    this.pageNumber = event.pageIndex + 1; 
+    this.pageSize = event.pageSize;
+    this.loadProducts();
+  }
+
+
+  addNew() {
+  const dialogRef = this.dialog.open(ProductCreateDialogComponent, {
+    width: '520px',
+    disableClose: true,
+    data: {
+      brands: this.brands ?? [],
+      categories: this.categories ?? [],
+      suppliers: this.suppliers ?? [],
+      promotions: this.promotions ?? []
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (!result) return;
+
+    const { dto, files, isPhone } = result;
+
+    this.loading = true;
+
+    this.productsService.create(dto).subscribe({
+      next: (created: any) => {
+        const newId = created?.productId;
+
+        
+        if (!newId) {
+          this.showMessage('Product created, but productId was not returned.', true);
+          this.loading = false;
+          this.loadProducts();
+          return;
+        }
+
+      
+        if (!files || files.length === 0) {
+          this.showMessage('Product created successfully');
+          this.loading = false;
+          this.loadProducts();
+          return;
+        }
+
+     
+        this.productsService.uploadImages(newId, files).subscribe({
+          next: () => {
+            this.showMessage('Product created with images');
+            this.loading = false;
+            this.loadProducts();
+          },
+          error: (err: any) => {
+            const msg = err?.error?.error || 'Product created, but image upload failed';
+            this.showMessage(msg, true);
+            this.loading = false;
+            this.loadProducts();
+          }
+        });
+      },
+      error: (err: any) => {
+        const msg = err?.error?.error || 'Error creating product';
+        this.showMessage(msg, true);
+        this.loading = false;
+      }
+    });
+  });
+}
+
+ 
+ edit(item: any) {
+  const dialogRef = this.dialog.open(ProductCreateDialogComponent, {
+    width: '520px',
+    disableClose: true,
+    data: {
+      brands: this.brands ?? [],
+      categories: this.categories ?? [],
+      suppliers: this.suppliers ?? [],
+      promotions: this.promotions ?? [],
+      product: item
+    }
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if (!result) return;
+
+    const { dto } = result; 
+    this.loading = true;
+
+    const updateDto = {
+      productId: item.productId,
+      productName: dto.productName,
+      model: dto.model,
+      price: dto.price,
+      brandId: dto.brandId,
+      supplierId: dto.supplierId,
+      categoryId: dto.categoryId,
+      promotionId: dto.promotionId ?? null
+    };
+
+    this.productsService.update(updateDto).subscribe({
+      next: () => {
+        this.showMessage('Product updated successfully');
+        this.loading = false;
+        this.loadProducts();
+      },
+      error: (err: any) => {
+        this.loading = false;
+        const msg = err?.error?.error || 'Error updating product';
+        this.showMessage(msg, true);
+      }
+    });
+  });
+}
+
+  delete(item: ProductDto) {
+    if (!confirm(`Delete product: ${item.productName} ${item.model}?`)) return;
+
+    this.productsService.delete(item.productId).subscribe({
+      next: () => {
+        this.showMessage('Product deleted successfully.');
+     
+        if (this.products.length === 1 && this.pageNumber > 1) this.pageNumber--;
+        this.loadProducts();
+      },
+      error: (err) => {
+        console.error(err);
+        const msg = err?.error?.error || 'Error deleting product.';
+        this.showMessage(msg, true);
+      }
+    });
+  }
+  logout() {
+  this.auth.logout();
+  this.router.navigate(['/']);
+}
 }
