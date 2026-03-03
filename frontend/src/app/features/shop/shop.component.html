@@ -2,11 +2,6 @@
   <h2 class="shop-title">Shop</h2>
   <p class="shop-subtitle">Browse our latest products</p>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Search products</mat-label>
-    <input matInput [formControl]="searchControl" placeholder="Name or model">
-  </mat-form-field>
-
   <!-- FILTER BAR -->
   <mat-card class="filter-bar">
     <div class="filter-row">
@@ -35,13 +30,13 @@
       <mat-grid-tile *ngFor="let p of products">
 
         <mat-card class="product-card">
-          <img
-            mat-card-image
-            [src]="p.imageUrl && p.imageUrl.trim() !== ''
-          ? p.imageUrl
-          : 'assets/placeholder.png'"
-            alt="{{ p.productName }}"
-          />
+          <img mat-card-image [src]="p.imageUrl && p.imageUrl.trim() !== '' ? p.imageUrl   : 'assets/placeholder.png'" alt="{{ p.productName }}"/>
+          
+          <button mat-icon-button color="warn" (click)="toggleFavorite(p)">
+            <mat-icon>
+              {{ isFavorite(p.productId) ? 'favorite' : 'favorite_border' }}
+            </mat-icon>
+          </button>
 
           <mat-card-content>
             <h3>{{ p.productName }}</h3>

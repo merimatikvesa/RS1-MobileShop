@@ -89,3 +89,8 @@ mat-card img {
   color: #666;
   padding-left: 10px;
 }
+.favorite-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
