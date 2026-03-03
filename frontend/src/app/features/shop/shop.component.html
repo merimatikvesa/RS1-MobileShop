@@ -1,6 +1,52 @@
-<div class="shop-layout">
+<header id="header">
+  <h1 id="logo"><a href="/">MobileShop</a></h1>
+  <nav id="nav">
+    <ul>
+      <li class="admin-dropdown" [class.hidden]="!auth.isAdmin()">
+        <a class="admin-toggle" tabindex="0">Admin Panel ▾</a>
+        <ul class="dropdown">
+          <li><a routerLink="/products">Products</a></li>
+          <li><a routerLink="/inventory">Inventory</a></li>
+        </ul>
+      </li>
+      <li><a routerLink="/">Shop</a></li>
+      <ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
+        <li><a routerLink="/login">Sign In</a></li>
+      </ng-container>
+
+      <ng-template #loggedIn>
+        <li><span>Hi, {{ auth.getUsername() }}!</span></li>
+        <li><a (click)="logout()" style="cursor:pointer;">Log Out</a></li>
+      </ng-template>
+    </ul>
+  </nav>
+</header><div class="shop-layout">
+
+
   <h2 class="shop-title">Shop</h2>
   <p class="shop-subtitle">Browse our latest products</p>
+
+  <h2 class="section-title">Best Deals</h2>
+
+  <div class="carousel">
+    <div class="carousel-track">
+      <mat-card
+        class="carousel-item"
+        *ngFor="let p of carouselProducts"
+      >
+        <img
+          mat-card-image
+          [src]="p.imageUrl || 'assets/placeholder.png'"
+          alt="{{ p.productName }}"
+        />
+
+        <mat-card-content>
+          <h3>{{ p.productName }}</h3>
+          <p>{{ p.price }} KM</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 
   <!-- FILTER BAR -->
   <mat-card class="filter-bar">
@@ -24,6 +70,8 @@
     </div>
   </mat-card>
 
+  <h2 class="section-title">All Products</h2>
+
   <!-- product grid -->
   <section class="product-grid">
     <mat-grid-list cols="3" gutterSize="16px" rowHeight="1:1">
@@ -31,7 +79,7 @@
 
         <mat-card class="product-card">
           <img mat-card-image [src]="p.imageUrl && p.imageUrl.trim() !== '' ? p.imageUrl   : 'assets/placeholder.png'" alt="{{ p.productName }}"/>
-          
+
           <button mat-icon-button color="warn" (click)="toggleFavorite(p)">
             <mat-icon>
               {{ isFavorite(p.productId) ? 'favorite' : 'favorite_border' }}
@@ -53,5 +101,12 @@
       </mat-grid-tile>
     </mat-grid-list>
   </section>
+
+  <mat-paginator
+    [length]="totalCount"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[6, 9, 12]"
+    (page)="onPageChange($event)">
+  </mat-paginator>
 
 </div>

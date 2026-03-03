@@ -52,8 +52,8 @@ mat-card img {
 }
 .filter-bar {
   margin-bottom: 24px;
-  padding: 16px 24px;
-  background-color: #6A86C8;
+  padding: 14px 24px;
+  background-color: rgb(150, 167, 198);
   border-radius: 12px;
 }
 /* Row layout */
@@ -93,4 +93,59 @@ mat-card img {
   position: absolute;
   top: 8px;
   right: 8px;
+}
+#header {
+  position: relative;
+  z-index: 1000;
+  background-color: rgb(100, 125, 185);
+}
+
+#header a:hover{
+  color:  #a9bfe4 !important;
+}
+#header .hidden {
+  display: none !important;
+}
+#header .admin-dropdown{
+  position: relative;
+  margin-right: 50px;
+}
+#header .admin-dropdown .dropdown{
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 9999;
+  min-width: 180px;
+  background: rgb(100, 125, 185);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+}
+#header .admin-dropdown:hover .dropdown,
+.admin-dropdown:focus-within .dropdown {
+  display: block;
+}
+
+.section-title {
+  margin: 16px 0 16px;
+  padding-left: 10px;
+}
+
+.carousel {
+  overflow-x: auto;
+  padding-bottom: 12px;
+  margin-bottom: 32px;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-item {
+  min-width: 220px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
 }
