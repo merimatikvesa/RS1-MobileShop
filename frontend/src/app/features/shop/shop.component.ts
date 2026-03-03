@@ -11,6 +11,11 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ProductDto } from '../products/product.dto';
 import { MatIconModule } from '@angular/material/icon';
+import {RouterLink} from '@angular/router';
+import {AuthService} from '../../core/services/auth/auth.service';
+import {Router, RouterModule} from '@angular/router';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 @Component({
   selector: 'app-shop',
@@ -23,21 +28,30 @@ import { MatIconModule } from '@angular/material/icon';
     MatSelectModule,
     MatGridListModule,
     MatIconModule,
-    MatButtonModule],
+    MatButtonModule,
+    MatPaginatorModule,
+    RouterModule, RouterLink],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css']
 })
 export class ShopComponent {
 
+  carouselProducts: ProductDto[] = [];
   products: any[] = [];
   totalCount = 0;
+
+  currentSearch: string = '';
 
   pageNumber = 1;
   pageSize = 9;
 
   searchControl = new FormControl('');
 
-  constructor(private shopService: ShopService) {
+  constructor(private shopService: ShopService,
+              public auth: AuthService,
+              private router: Router,
+              ) {
+
     this.searchControl.valueChanges
       .pipe(
         debounceTime(400),
@@ -54,13 +68,22 @@ export class ShopComponent {
   }
 
   loadProducts(search: string) {
+    this.currentSearch = search;
+
     this.shopService.getProducts({
       search,
       pageNumber: this.pageNumber,
       pageSize: this.pageSize
+
     }).subscribe(res => {
       this.products = res.data;
       this.totalCount = res.totalCount;
+
+      if (this.carouselProducts.length === 0) {
+        this.carouselProducts = [...res.data]
+          .sort((a, b) => a.price - b.price)
+          .slice(0, 8);
+      }
     });
   }
   toggleFavorite(product: ProductDto) {
@@ -81,5 +104,14 @@ export class ShopComponent {
       localStorage.getItem('favorites') || '[]'
     );
     return favs.includes(productId);
+  }
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/']);
+  }
+  onPageChange(event: any) {
+    this.pageNumber = event.pageIndex + 1; // Angular paginator je 0-based
+    this.pageSize = event.pageSize;
+    this.loadProducts(this.currentSearch);
   }
 }

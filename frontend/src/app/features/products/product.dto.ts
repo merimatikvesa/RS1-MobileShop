@@ -15,6 +15,8 @@ export interface ProductDto {
 
   promotionId?: number | null;
   promotionName?: string | null;
+
+  imageUrl?: string | null;
 }
 export interface PagedResult<T> {
   data: T[];
