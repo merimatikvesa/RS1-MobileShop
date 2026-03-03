@@ -9,7 +9,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-
+import { RecaptchaModule } from 'ng-recaptcha';
+import { environment } from '../../../../evnvironments/environment';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   MatStepperModule,
   MatInputModule,
   MatButtonModule,
-  TranslateModule],
+  TranslateModule,
+  RecaptchaModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -37,7 +39,11 @@ export class LoginComponent {
   private translate = inject(TranslateService);
 
   currentLang: 'bs' | 'en' = (localStorage.getItem('lang') as 'bs' | 'en') || 'bs';
+siteKey = environment.recaptchaSiteKey;
 
+onCaptchaResolved(token: string | null) {
+  this.passwordForm.patchValue({ recaptchaToken: token ?? '' });
+}
   constructor() {
     this.translate.setDefaultLang('bs');
     this.translate.use(this.currentLang);
@@ -54,8 +60,9 @@ export class LoginComponent {
   });
 
   passwordForm = this.fb.group({
-    password: ['', Validators.required]
-  });
+  password: ['', Validators.required],
+  recaptchaToken: ['', Validators.required]
+});
 
   loading = false;
   errorMsg = '';
@@ -66,14 +73,15 @@ export class LoginComponent {
       this.passwordForm.markAllAsTouched();
       return;
     }
-
+  
 
 
     this.loading = true;
 
     const payload: LoginRequestDto = {
       username: this.usernameForm.value.username!,
-      password: this.passwordForm.value.password!
+      password: this.passwordForm.value.password!,
+      recaptchaToken: this.passwordForm.value.recaptchaToken!
     };
    
     // const payload: LoginRequestDto = this.form.value;

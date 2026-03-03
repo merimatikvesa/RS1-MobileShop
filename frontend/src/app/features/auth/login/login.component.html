@@ -56,6 +56,10 @@
            *ngIf="passwordForm.get('password')?.touched && passwordForm.get('password')?.hasError('required')">
         Password is required
       </div>
+      <re-captcha [siteKey]="siteKey" (resolved)="onCaptchaResolved($event)"></re-captcha>
+        <div class="error" *ngIf="passwordForm.get('recaptchaToken')?.touched && passwordForm.get('recaptchaToken')?.hasError('required')">
+          Captcha is required
+        </div>
 
       <div class="actions">
         <button mat-button matStepperPrevious type="button">

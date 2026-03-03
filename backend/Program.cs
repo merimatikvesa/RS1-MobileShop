@@ -96,6 +96,7 @@ builder.Services.AddCors(options =>
          .AllowAnyMethod()
          .AllowAnyHeader());
 });
+builder.Services.AddHttpClient<backend.Services.Security.RecaptchaService>();
 
 var app = builder.Build();
 
