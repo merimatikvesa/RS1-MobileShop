@@ -20,7 +20,8 @@ import { CategoryDto } from './category.dto';
 import { SupplierDto } from './supplier.dto';
 import { PromotionDto } from './promotion.dto';
 import { RouterModule } from '@angular/router';
-
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-products',
@@ -49,6 +50,7 @@ export class ProductsComponent implements OnInit {
   suppliers: SupplierDto[] = [];
   promotions: PromotionDto[] = [];
   filterForm!: FormGroup;
+  private destroy$ = new Subject<void>();
 
   loading = false;
 
@@ -85,6 +87,24 @@ export class ProductsComponent implements OnInit {
       maxPrice: [null, Validators.min(0)]
     });
 
+    // LIVE FILTER (debounce)
+  this.filterForm.valueChanges
+  .pipe(
+    debounceTime(350),
+    distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+    takeUntil(this.destroy$)
+  )
+  .subscribe(() => {
+    const search = (this.filterForm.value.search ?? '').trim();
+
+    
+    if (search.length === 1) return;
+
+ 
+    this.pageNumber = 1;
+    this.loadProducts();
+  });
+
     this.loadProducts();
     this.productsService.getBrands().subscribe(b => this.brands = b);
     this.productsService.getCategories().subscribe(c => this.categories = c);
@@ -108,8 +128,7 @@ export class ProductsComponent implements OnInit {
    
     const { minPrice, maxPrice, search } = this.filterForm.value;
 
-    if (search && search.trim().length > 0 && search.trim().length < 2) {
-      this.showMessage('Search must be at least 2 characters.', true);
+    if (search && search.trim().length === 1) { 
       return;
     }
 
@@ -139,10 +158,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  applyFilter() {
-    this.pageNumber = 1;
-    this.loadProducts();
-  }
+  
 
   clearFilter() {
     this.filterForm.reset({
@@ -292,5 +308,9 @@ export class ProductsComponent implements OnInit {
   logout() {
   this.auth.logout();
   this.router.navigate(['/']);
+}
+  ngOnDestroy(): void {
+  this.destroy$.next();
+  this.destroy$.complete();
 }
 }
