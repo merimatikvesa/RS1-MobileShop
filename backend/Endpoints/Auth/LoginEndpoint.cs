@@ -6,6 +6,7 @@ using backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using backend.Services.Security;
 
 namespace backend.Endpoints.Auth
 {
@@ -15,12 +16,15 @@ namespace backend.Endpoints.Auth
     {
         private readonly MyDbContext _db;
         private readonly IJwtService _jwt;
+        private readonly RecaptchaService _recaptcha;
 
-        public LoginEndpoint(MyDbContext db, IJwtService jwt)
+        public LoginEndpoint(MyDbContext db, IJwtService jwt, RecaptchaService recaptcha)
         {
             _db = db;
             _jwt = jwt;
+            _recaptcha = recaptcha;
         }
+
 
         [HttpPost("api/auth/login")]
         public override async Task<ActionResult<LoginResponseDto>> HandleAsync(
@@ -29,13 +33,15 @@ namespace backend.Endpoints.Auth
         {
             // Basic validation (with DataAnnotations on DTO)
             if (string.IsNullOrWhiteSpace(request.Username) ||
-                string.IsNullOrWhiteSpace(request.Password)) // TODO: Add password hashing in future implementation
+                string.IsNullOrWhiteSpace(request.Password)) 
             {
                 return BadRequest(new { errors = new[] { "Username and password are required." } });
             }
 
-            // NOTE: For demo comparison of plain-password. 
-            // In production: hash + salt, then comparison of hashes.
+            var captchaOk = await _recaptcha.VerifyAsync(request.RecaptchaToken, cancellationToken);
+            if (!captchaOk)
+                return BadRequest(new { errors = new[] { "Captcha verification failed." } });
+
             var account = await _db.Accounts
                 .FirstOrDefaultAsync(a =>
                     a.Username == request.Username && a.Password == request.Password,
