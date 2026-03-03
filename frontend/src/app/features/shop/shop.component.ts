@@ -9,6 +9,8 @@ import { ShopService } from './shop.service';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ProductDto } from '../products/product.dto';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-shop',
@@ -20,6 +22,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
     MatCardModule,
     MatSelectModule,
     MatGridListModule,
+    MatIconModule,
     MatButtonModule],
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css']
@@ -60,5 +63,23 @@ export class ShopComponent {
       this.totalCount = res.totalCount;
     });
   }
+  toggleFavorite(product: ProductDto) {
+    let favs: number[] = JSON.parse(
+      localStorage.getItem('favorites') || '[]'
+    );
 
+    if (favs.includes(product.productId)) {
+      favs = favs.filter((id: number) => id !== product.productId);
+    } else {
+      favs.push(product.productId);
+    }
+
+    localStorage.setItem('favorites', JSON.stringify(favs));
+  }
+  isFavorite(productId: number): boolean {
+    const favs: number[] = JSON.parse(
+      localStorage.getItem('favorites') || '[]'
+    );
+    return favs.includes(productId);
+  }
 }
