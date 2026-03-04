@@ -70,7 +70,9 @@
   </form>
 </section>
 
-<hr>
+
+
+
 
 <section class="section">
   <h2>Products list</h2>
@@ -132,3 +134,45 @@
   [pageSizeOptions]="[10, 20, 50]"
   (page)="onPageChange($event)">
 </mat-paginator>
+
+
+<section class="section">
+  <h2>Products PDF Report</h2>
+
+  <form [formGroup]="reportForm" class="form-row report-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Product ID (optional)</mat-label>
+      <input matInput type="number" formControlName="id">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Product name (optional)</mat-label>
+      <input matInput formControlName="productName">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Start date</mat-label>
+      <input matInput [matDatepicker]="dp1" formControlName="startDate">
+      <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+      <mat-datepicker #dp1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>End date</mat-label>
+      <input matInput [matDatepicker]="dp2" formControlName="endDate">
+      <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+      <mat-datepicker #dp2></mat-datepicker>
+    </mat-form-field>
+
+    <div class="actions">
+      <button type="button" mat-button (click)="reportForm.reset({ id: null, productName: '', startDate: reportForm.value.startDate, endDate: reportForm.value.endDate })">
+        Clear
+      </button>
+
+      <button type="button" mat-raised-button color="primary" (click)="generatePdf()">
+        Generate PDF
+      </button>
+    </div>
+  </form>
+</section>
+
