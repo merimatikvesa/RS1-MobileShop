@@ -47,8 +47,12 @@ namespace backend.Data
             modelBuilder.Entity<AuthToken>()
                 .HasIndex(t => t.Value)
                 .IsUnique();
+            
+            modelBuilder.Entity<Product>()
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
 
-           modelBuilder.Entity<Brand>().HasData(
+            modelBuilder.Entity<Brand>().HasData(
             new Brand
             {
                 BrandId = 1,
@@ -90,7 +94,8 @@ namespace backend.Data
                 BrandId = 1,       
                 SupplierId = 1,
                 CategoryId = 1,   
-                PromotionId = null
+                PromotionId = null,
+                CreatedAt = new DateTime(2026, 1, 1)
             },
             new Product
             {
@@ -101,7 +106,8 @@ namespace backend.Data
                 BrandId = 1,
                 SupplierId = 1,
                 CategoryId = 1,
-                PromotionId = null
+                PromotionId = null,
+                CreatedAt = new DateTime(2026, 1, 2)
             },
             new Product
             {
@@ -112,7 +118,8 @@ namespace backend.Data
                 BrandId = 2,       
                 SupplierId = 1,
                 CategoryId = 1,
-                PromotionId = null
+                PromotionId = null,
+                CreatedAt = new DateTime(2026, 1, 1)
             },
             new Product
             {
@@ -123,7 +130,8 @@ namespace backend.Data
                 BrandId = 2,
                 SupplierId = 1,
                 CategoryId = 1,
-                PromotionId = null
+                PromotionId = null,
+                CreatedAt = new DateTime(2025, 11, 11)
             }
             );
 

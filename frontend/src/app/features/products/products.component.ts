@@ -22,6 +22,9 @@ import { PromotionDto } from './promotion.dto';
 import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { ReportsService } from '../../core/services/reports/product-report.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-products',
@@ -38,7 +41,9 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
     MatPaginatorModule,
     MatSelectModule,
     MatDialogModule,
-    RouterModule
+    RouterModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
@@ -51,7 +56,7 @@ export class ProductsComponent implements OnInit {
   promotions: PromotionDto[] = [];
   filterForm!: FormGroup;
   private destroy$ = new Subject<void>();
-
+  reportForm!: FormGroup;
   loading = false;
 
   totalCount = 0;
@@ -75,7 +80,8 @@ export class ProductsComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public auth: AuthService,
-    private router: Router
+    private router: Router,
+    private reports: ReportsService
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +91,13 @@ export class ProductsComponent implements OnInit {
       brandId: [null],
       minPrice: [null, Validators.min(0)],
       maxPrice: [null, Validators.min(0)]
+    });
+
+    this.reportForm = this.fb.group({
+      id: [null],
+      productName: [''],
+      startDate: [new Date(), Validators.required],
+     endDate: [new Date(), Validators.required]
     });
 
     // LIVE FILTER (debounce)
@@ -240,7 +253,7 @@ export class ProductsComponent implements OnInit {
       }
     });
   });
-}
+ }
 
  
  edit(item: any) {
@@ -286,7 +299,7 @@ export class ProductsComponent implements OnInit {
       }
     });
   });
-}
+  }
 
   delete(item: ProductDto) {
     if (!confirm(`Delete product: ${item.productName} ${item.model}?`)) return;
@@ -306,11 +319,49 @@ export class ProductsComponent implements OnInit {
     });
   }
   logout() {
-  this.auth.logout();
-  this.router.navigate(['/']);
-}
+    this.auth.logout();
+    this.router.navigate(['/']);
+  }
   ngOnDestroy(): void {
-  this.destroy$.next();
-  this.destroy$.complete();
-}
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  generatePdf() {
+  if (this.reportForm.invalid) {
+    this.showMessage('Please select Start date and End date.', true);
+    return;
+  }
+
+  const v = this.reportForm.value;
+
+  this.loading = true;
+
+  this.reports.downloadProductsReport({
+    id: v.id,
+    productName: v.productName,
+    startDate: v.startDate,
+    endDate: v.endDate
+  }).subscribe({
+    next: (blob) => {
+      console.log('Blob type:', blob.type, 'size:', blob.size);
+      this.downloadBlob(blob, `products_report_${Date.now()}.pdf`);
+      this.loading = false;
+      this.showMessage('PDF report generated.');
+    },
+    error: (err) => {
+      console.error(err);
+      this.loading = false;
+      this.showMessage('Error generating PDF report.', true);
+    }
+  });
+  }   
+
+  private downloadBlob(blob: Blob, filename: string) {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+  }
 }

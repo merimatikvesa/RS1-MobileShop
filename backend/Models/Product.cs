@@ -20,6 +20,10 @@ namespace backend.Models
         public Category Category { get; set; }
         public int? PromotionId { get; set; }
         public Promotion Promotion { get; set; }
+        [Required]
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
 
         public ICollection<Favorites> Favorites { get; set; } = new List<Favorites>();
         public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
