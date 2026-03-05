@@ -49,6 +49,7 @@ export class ProductCreateDialogComponent {
   uploading = false;
   uploadProgress = 0;
   uploadError: string | null = null;
+  isDragging = false;
 
 // promijeni ako ti je drugačiji base URL
 private apiBaseUrl = 'https://localhost:7275';
@@ -89,21 +90,22 @@ private apiBaseUrl = 'https://localhost:7275';
   });
 }
   }
+  private handleIncomingFiles(newFiles: File[]) {
 
-  onFileSelected(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (!input.files?.length) return;
+  const imagesOnly = newFiles.filter(f => f.type.startsWith('image/'));
+  if (!imagesOnly.length) return;
 
-  const newFiles = Array.from(input.files);
+  const remaining = 5 - this.selectedFiles.length;
+  if (remaining <= 0) {
+    alert('Maximum 5 images allowed.');
+    return;
+  }
 
-  const total = this.selectedFiles.length + newFiles.length;
-
-  if (total > 5) {
+  if (imagesOnly.length > remaining) {
     alert('Maximum 5 images allowed.');
   }
 
-  const allowed = newFiles.slice(0, 5 - this.selectedFiles.length);
-
+  const allowed = imagesOnly.slice(0, remaining);
   this.selectedFiles.push(...allowed);
 
   for (const file of allowed) {
@@ -111,7 +113,38 @@ private apiBaseUrl = 'https://localhost:7275';
     reader.onload = () => this.previewUrls.push(reader.result as string);
     reader.readAsDataURL(file);
   }
+}
 
+onDragEnter(e: DragEvent) {
+  e.preventDefault();
+  this.isDragging = true;
+}
+
+onDragOver(e: DragEvent) {
+  e.preventDefault(); // obavezno, inače drop neće raditi
+  this.isDragging = true;
+}
+
+onDragLeave(e: DragEvent) {
+  e.preventDefault();
+  this.isDragging = false;
+}
+
+onDrop(e: DragEvent) {
+  e.preventDefault();
+  this.isDragging = false;
+
+  const files = e.dataTransfer?.files;
+  if (!files?.length) return;
+
+  this.handleIncomingFiles(Array.from(files));
+}
+
+  onFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (!input.files?.length) return;
+
+  this.handleIncomingFiles(Array.from(input.files));
   input.value = '';
   }
 
