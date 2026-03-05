@@ -1,8 +1,8 @@
-﻿namespace backend.Endpoints.Products
+﻿namespace backend.DTOs.Products
 {
     public class GetProductsFilterRequest
     {
-        public string? Search { get; set; }     
+        public string? Search { get; set; }
         public int? CategoryId { get; set; }
         public int? BrandId { get; set; }
         public decimal? MinPrice { get; set; }

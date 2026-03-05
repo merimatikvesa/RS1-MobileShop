@@ -3,6 +3,7 @@ using backend.Helper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.DTOs.Products;
 
 namespace backend.Endpoints.Products
 {
@@ -92,15 +93,4 @@ namespace backend.Endpoints.Products
         }
     }
 
-    public class UpdateProductRequest
-    {
-        public int ProductId { get; set; }
-        public string ProductName { get; set; } = string.Empty;
-        public string Model { get; set; } = string.Empty;
-        public decimal Price { get; set; }
-        public int BrandId { get; set; }
-        public int SupplierId { get; set; }
-        public int CategoryId { get; set; }
-        public int? PromotionId { get; set; }
-    }
 }
