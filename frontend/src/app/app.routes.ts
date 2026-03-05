@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { LandingComponent } from './landing/landing.component';
 import { adminGuard } from './core/guards/admin.guard';
+import { InventoryReportComponent } from './features/inventory/inventory-report/inventory-report.component';
 
 export const routes: Routes = [
   //public
@@ -14,6 +15,7 @@ export const routes: Routes = [
 
   { path: 'inventory',canActivate: [adminGuard], loadComponent: () => import('./features/inventory/inventory.component').then(m => m.InventoryComponent) },
   {path: 'shop', loadComponent: () => import('./features/shop/shop.component').then(m => m.ShopComponent) },
+  {path: 'inventory-report', component: InventoryReportComponent },
 
   { path: 'orders', canActivate: [authGuard], loadComponent: () => import('./features/orders/orders.component').then(m => m.OrdersComponent) },
 

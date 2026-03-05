@@ -1,6 +1,6 @@
 ﻿using backend.Models;
 
-namespace backend.Endpoints.Inventories
+namespace backend.DTOs.Inventory
 {
     public class GetInventoryFilterRequest
     {

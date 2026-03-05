@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using backend.DTOs.Inventory;
 
 namespace backend.Endpoints.Inventories
 {
@@ -44,9 +45,4 @@ namespace backend.Endpoints.Inventories
         }
     }
 
-    public class UpdateInventoryRequest
-    {
-        public int ProductId { get; set; }
-        public int QuantityInStock { get; set; }
-    }
 }
