@@ -6,6 +6,7 @@ export interface ProductCreateDto {
   supplierId: number;
   categoryId: number;
   promotionId?: number | null;
+  imagePath?: string | null;
 }
 
 export interface ProductUpdateDto extends ProductCreateDto {

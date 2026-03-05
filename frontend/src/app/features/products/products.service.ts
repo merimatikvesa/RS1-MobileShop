@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { PagedResult, ProductDto} from './product.dto';
+import { HttpEvent } from '@angular/common/http';
 import { BrandDto} from './brand.dto';
 import { CategoryDto} from './category.dto';
 import { ProductCreateDto, ProductUpdateDto } from './product-create-update.dto';
@@ -15,6 +16,11 @@ export interface ProductFilter {
   maxPrice?: number | null;
   pageNumber: number;
   pageSize: number;
+}
+export interface ProductImageDto {
+  productImageId: number;
+  imageId: number;
+  imagePath: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -58,6 +64,17 @@ export class ProductsService {
   uploadImages(productId: number, files: File[]) {
   const formData = new FormData();
   files.forEach(f => formData.append('files', f));
-  return this.http.post(`${this.apiUrl}/${productId}/images`, formData);
+
+  return this.http.post<any>(
+    `${this.apiUrl}/${productId}/images`,
+    formData,
+    { observe: 'events', reportProgress: true }
+  );
+  }
+  getProductImages(productId: number) {
+  return this.http.get<any[]>(`${this.apiUrl}/${productId}/images`);
+  }
+  deleteProductImage(productId: number, productImageId: number) {
+  return this.http.delete(`${this.apiUrl}/${productId}/images/${productImageId}`);
   }
 }

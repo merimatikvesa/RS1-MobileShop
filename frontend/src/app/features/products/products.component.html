@@ -23,7 +23,7 @@
 				</header>
 
 <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-
+<br>
 <section class="section">
   <h2>Products filter</h2>
 
@@ -76,6 +76,8 @@
 
 <section class="section">
   <h2>Products list</h2>
+<mat-progress-bar *ngIf="uploadingImages" [mode]="uploadProgress ? 'determinate' : 'indeterminate'" [value]="uploadProgress"></mat-progress-bar>
+<div *ngIf="uploadingImages">{{ uploadProgress }}%</div>
 
   <table mat-table [dataSource]="products" class="mat-elevation-z8">
 
@@ -126,18 +128,18 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
   </table>
-</section>
-
-<mat-paginator
+  <mat-paginator
   [length]="totalCount"
   [pageSize]="pageSize"
   [pageSizeOptions]="[10, 20, 50]"
   (page)="onPageChange($event)">
 </mat-paginator>
+</section>
+
 
 
 <section class="section">
-  <h2>Products PDF Report</h2>
+  <h2>Products 'Created At' Report</h2>
 
   <form [formGroup]="reportForm" class="form-row report-row">
     <mat-form-field appearance="outline">

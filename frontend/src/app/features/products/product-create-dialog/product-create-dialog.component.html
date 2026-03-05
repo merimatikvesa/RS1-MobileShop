@@ -34,7 +34,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Supplier</mat-label>
       <mat-select formControlName="supplierId" >
-        <mat-option *ngFor="let s of data.suppliers" [value]="s.supplierId">{{ s.name }}</mat-option>
+        <mat-option *ngFor="let s of data.suppliers" [value]="s.supplierId" style="color: black !important;">{{ s.name }}</mat-option>
       </mat-select>
       <mat-error *ngIf="form.get('supplierId')?.hasError('required')">Required</mat-error>
     </mat-form-field>
@@ -54,9 +54,61 @@
         <mat-option *ngFor="let p of data.promotions" [value]="p.promotionId">{{ p.name }}</mat-option>
       </mat-select>
     </mat-form-field>
+    
+    
+    <label style="display:block; margin: 8px 0 6px; color: black !important;">Images (optional)</label>
 
-    <label style="display:block; margin: 8px 0 6px;">Images (optional)</label>
-    <input type="file" multiple accept="image/*" (change)="onFilesSelected($event)" />
+    <div *ngIf="data.existingImages?.length" style="margin:10px 0;">
+  <div style="font-size:12px; opacity:.7; margin-bottom:6px;">Existing images</div>
+
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <img *ngFor="let img of data.existingImages"
+         [src]="'https://localhost:7275' + img.imagePath"
+         style="width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid #e5e5e5;" />
+  </div>
+</div>
+
+<input
+  #fileInput
+  type="file"
+  accept="image/*"
+  multiple
+  (change)="onFileSelected($event)"
+  hidden
+/>
+
+<button mat-stroked-button type="button" (click)="fileInput.click()">
+  Select images (max 5)
+</button>
+
+<div *ngIf="selectedFiles.length">
+  {{ selectedFiles.length }} image(s) selected
+</div>
+
+
+<!-- Preview -->
+<div *ngIf="selectedFiles.length" style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+  <!-- Thumbnails grid -->
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <div *ngFor="let p of previewUrls; let i = index"
+         style="width:92px; display:flex; flex-direction:column; gap:6px;">
+
+      <img [src]="p"
+           alt="preview"
+           style="width:92px; height:92px; object-fit:cover; border-radius:10px; border:1px solid #e5e5e5;" />
+
+      <button mat-stroked-button type="button" (click)="removeImage(i)">
+        Remove
+      </button>
+    </div>
+  </div>
+  <!-- Remove all -->
+  <div>
+    <button mat-button type="button" (click)="clearImages()">
+      Remove all
+    </button>
+  </div>
+</div>
 
     <mat-checkbox formControlName="isPhone">This product is a phone (add phone specs after saving)</mat-checkbox>
   </form>
