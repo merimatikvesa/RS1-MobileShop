@@ -17,6 +17,7 @@ import { ViewChild } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import {AuthService} from '../../core/services/auth/auth.service';
 import {Router, RouterModule} from '@angular/router';
+import { InventoryReportComponent } from './inventory-report/inventory-report.component';
 
 @Component({
   selector: 'app-inventory',
@@ -32,7 +33,8 @@ import {Router, RouterModule} from '@angular/router';
     MatTableModule,
     MatPaginatorModule,
     MatStepperModule,
-    RouterModule
+    RouterModule,
+    InventoryReportComponent
   ],
   templateUrl: './inventory.component.html',
   styleUrls: ['./inventory.component.css']

@@ -3,33 +3,30 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-export class ReportsService {
+export class InventoryReportService {
+
   constructor(private http: HttpClient) {}
 
-  downloadProductsReport(params: {
-    id?: number | null;
-    productName?: string | null;
+  downloadInventoryReport(params: {
+    productId?: number | null;
     startDate: Date;
     endDate: Date;
   }): Observable<Blob> {
+
     let httpParams = new HttpParams()
       .set('startDate', this.toYmd(params.startDate))
       .set('endDate', this.toYmd(params.endDate));
 
-    if (params.id && params.id > 0) {
-      httpParams = httpParams.set('id', params.id);
-    }
-
-    if (params.productName && params.productName.trim().length > 0) {
-      httpParams = httpParams.set('productName', params.productName.trim());
+    if (params.productId && params.productId > 0) {
+      httpParams = httpParams.set('productId', params.productId);
     }
 
     const API = 'https://localhost:7275';
 
-      return this.http.get(`${API}/api/reports/products`, {
-        params: httpParams,
-        responseType: 'blob'
-});
+    return this.http.get(`${API}/api/reports/inventory`, {
+      params: httpParams,
+      responseType: 'blob'
+    });
   }
 
   private toYmd(d: Date): string {
