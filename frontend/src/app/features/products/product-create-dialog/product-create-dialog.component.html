@@ -77,9 +77,23 @@
   hidden
 />
 
-<button mat-stroked-button type="button" (click)="fileInput.click()">
-  Select images (max 5)
-</button>
+<div
+  class="dropzone"
+  [class.dragging]="isDragging"
+  (dragenter)="onDragEnter($event)"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+>
+  <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
+    <div style="font-weight:600;">Drag & drop images here</div>
+    <div style="font-size:12px; opacity:.7;">or</div>
+
+    <button mat-stroked-button type="button" (click)="fileInput.click()">
+      Select images (max 5)
+    </button>
+  </div>
+</div>
 
 <div *ngIf="selectedFiles.length">
   {{ selectedFiles.length }} image(s) selected

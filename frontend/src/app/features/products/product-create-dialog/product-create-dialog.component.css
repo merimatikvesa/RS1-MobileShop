@@ -26,3 +26,16 @@ h2{
   padding-left: 30px;
   padding-top: 30px;
 }
+
+.dropzone{
+  border: 2px dashed #cfcfcf;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  transition: 0.15s;
+}
+
+.dropzone.dragging{
+  border-color: #3f51b5;
+  background: rgba(63, 81, 181, 0.06);
+}
