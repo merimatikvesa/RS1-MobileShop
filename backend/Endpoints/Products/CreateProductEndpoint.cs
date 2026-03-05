@@ -65,7 +65,19 @@ namespace backend.Endpoints.Products
                 BrandId = request.BrandId,
                 CategoryId = request.CategoryId,
                 SupplierId = request.SupplierId,
-                PromotionId = request.PromotionId
+                PromotionId = request.PromotionId,
+                Images = string.IsNullOrEmpty(request.ImagePath)
+                         ? new List<backend.Models.ProductImage>()
+    :                    new List<backend.Models.ProductImage>
+                         {
+                             new backend.Models.ProductImage
+                             {
+                                   Image = new backend.Models.Image
+                                   {
+                                        ImagePath = request.ImagePath
+                                   }
+                             }
+                          }
                 // Phone stay null (not required)
             };
 
@@ -105,5 +117,6 @@ namespace backend.Endpoints.Products
         public int SupplierId { get; set; }
         public int CategoryId { get; set; }
         public int? PromotionId { get; set; }
+        public string ImagePath { get; set; } = "";
     }
 }

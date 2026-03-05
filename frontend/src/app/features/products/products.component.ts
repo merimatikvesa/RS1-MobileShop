@@ -25,6 +25,7 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { ReportsService } from '../../core/services/reports/product-report.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-products',
@@ -62,6 +63,8 @@ export class ProductsComponent implements OnInit {
   totalCount = 0;
   pageNumber = 1;
   pageSize = 10;
+  uploadingImages = false;
+  uploadProgress = 0;
 
   displayedColumns: string[] = [
     'productName',
@@ -210,7 +213,7 @@ export class ProductsComponent implements OnInit {
     const { dto, files, isPhone } = result;
 
     this.loading = true;
-
+    //1. create product
     this.productsService.create(dto).subscribe({
       next: (created: any) => {
         const newId = created?.productId;
@@ -230,20 +233,33 @@ export class ProductsComponent implements OnInit {
           this.loadProducts();
           return;
         }
-
+        this.uploadingImages = true;
+        this.uploadProgress=0;
      
         this.productsService.uploadImages(newId, files).subscribe({
-          next: () => {
+          next:(event: any) => {
+            // Upload progress
+            if (event.type === HttpEventType.UploadProgress) {
+            const total = event.total ?? 1;
+            this.uploadProgress = Math.round((100 * event.loaded) / total);
+            }
+
+            // Response finished
+            if (event.type === HttpEventType.Response) {
+            this.uploadingImages = false;
+            this.uploadProgress = 0;
             this.showMessage('Product created with images');
             this.loading = false;
             this.loadProducts();
+            }
           },
           error: (err: any) => {
-            const msg = err?.error?.error || 'Product created, but image upload failed';
-            this.showMessage(msg, true);
-            this.loading = false;
-            this.loadProducts();
-          }
+          this.uploadingImages = false;
+          const msg = err?.error?.error || 'Product created, but image upload failed';
+          this.showMessage(msg, true);
+          this.loading = false;
+          this.loadProducts();
+        }
         });
       },
       error: (err: any) => {
@@ -257,47 +273,85 @@ export class ProductsComponent implements OnInit {
 
  
  edit(item: any) {
-  const dialogRef = this.dialog.open(ProductCreateDialogComponent, {
-    width: '520px',
-    disableClose: true,
-    data: {
-      brands: this.brands ?? [],
-      categories: this.categories ?? [],
-      suppliers: this.suppliers ?? [],
-      promotions: this.promotions ?? [],
-      product: item
-    }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (!result) return;
-
-    const { dto } = result; 
-    this.loading = true;
-
-    const updateDto = {
-      productId: item.productId,
-      productName: dto.productName,
-      model: dto.model,
-      price: dto.price,
-      brandId: dto.brandId,
-      supplierId: dto.supplierId,
-      categoryId: dto.categoryId,
-      promotionId: dto.promotionId ?? null
-    };
-
-    this.productsService.update(updateDto).subscribe({
-      next: () => {
-        this.showMessage('Product updated successfully');
-        this.loading = false;
-        this.loadProducts();
-      },
-      error: (err: any) => {
-        this.loading = false;
-        const msg = err?.error?.error || 'Error updating product';
-        this.showMessage(msg, true);
+  
+  const openEditDialog = (existingImages: any[] = []) => {
+    const dialogRef = this.dialog.open(ProductCreateDialogComponent, {
+      width: '520px',
+      disableClose: true,
+      data: {
+        brands: this.brands ?? [],
+        categories: this.categories ?? [],
+        suppliers: this.suppliers ?? [],
+        promotions: this.promotions ?? [],
+        product: item,
+        existingImages
       }
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      const { dto, files } = result;
+      this.loading = true;
+
+      const updateDto = {
+        productId: item.productId,
+        productName: dto.productName,
+        model: dto.model,
+        price: dto.price,
+        brandId: dto.brandId,
+        supplierId: dto.supplierId,
+        categoryId: dto.categoryId,
+        promotionId: dto.promotionId ?? null
+      };
+
+      this.productsService.update(updateDto).subscribe({
+        next: () => {
+          if (!files || files.length === 0) {
+            this.showMessage('Product updated successfully');
+            this.loading = false;
+            this.loadProducts();
+            return;
+          }
+
+          this.uploadingImages = true;
+          this.uploadProgress = 0;
+
+          this.productsService.uploadImages(item.productId, files).subscribe({
+            next: (event: any) => {
+              if (event.type === 3) {
+                const total = event.total ?? 1;
+                this.uploadProgress = Math.round((100 * event.loaded) / total);
+              }
+              if (event.type === 4) {
+                this.uploadingImages = false;
+                this.showMessage('Product updated with images');
+                this.loading = false;
+                this.loadProducts();
+              }
+            },
+            error: (err: any) => {
+              this.uploadingImages = false;
+              const msg = err?.error?.error || 'Product updated, but image upload failed';
+              this.showMessage(msg, true);
+              this.loading = false;
+              this.loadProducts();
+            }
+          });
+        },
+        error: (err: any) => {
+          this.loading = false;
+          const msg = err?.error?.error || 'Error updating product';
+          this.showMessage(msg, true);
+        }
+      });
+    });
+  };
+
+ 
+  this.productsService.getProductImages(item.productId).subscribe({
+    next: (images) => openEditDialog(images),
+    error: () => openEditDialog([]) 
   });
   }
 
@@ -364,4 +418,6 @@ export class ProductsComponent implements OnInit {
   a.click();
   window.URL.revokeObjectURL(url);
   }
+
+
 }
