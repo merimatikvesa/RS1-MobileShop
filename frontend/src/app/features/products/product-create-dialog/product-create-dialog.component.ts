@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,6 +15,7 @@ import { CategoryDto } from '../category.dto';
 import { ProductCreateDto } from '../product-create-update.dto';
 import { ProductDto } from '../product.dto';
 import { ProductsService } from '../products.service';
+import { ImagePreviewDialogComponent } from './image-preview-dialog/image-preview-dialog.component';
 
 export interface ProductCreateDialogData {
   brands: BrandDto[];
@@ -42,7 +43,6 @@ export interface ProductCreateDialogData {
 })
 export class ProductCreateDialogComponent {
   form: FormGroup;
- // selectedFiles: File[] = [];
   selectedFiles: File[] = [];
   previewUrls: string[] = [];
  
@@ -51,14 +51,15 @@ export class ProductCreateDialogComponent {
   uploadError: string | null = null;
   isDragging = false;
 
-// promijeni ako ti je drugačiji base URL
-private apiBaseUrl = 'https://localhost:7275';
-  
+  private apiBaseUrl = 'https://localhost:7275';
+ 
   constructor(
     private fb: FormBuilder,
     private productsService: ProductsService,
+    private dialog: MatDialog,
     private dialogRef: MatDialogRef<ProductCreateDialogComponent>,
     private http: HttpClient,
+
     @Inject(MAT_DIALOG_DATA) public data: ProductCreateDialogData
   ) {
     this.selectedFiles = [];
@@ -121,7 +122,7 @@ onDragEnter(e: DragEvent) {
 }
 
 onDragOver(e: DragEvent) {
-  e.preventDefault(); // obavezno, inače drop neće raditi
+  e.preventDefault(); 
   this.isDragging = true;
 }
 
@@ -190,13 +191,13 @@ removeImage(index: number) {
 
   if (!productImageId || !productId) return;
 
-  // optimistic UI: ukloni iz liste
+  
   this.data.existingImages = (this.data.existingImages ?? []).filter((x:any) => {
     const id = x.productImageId ?? x.ProductImageId;
     return id !== productImageId;
   });
 
-  // pozovi API
+  
   this.productsService.deleteProductImage(productId, productImageId).subscribe({
     next: () => {},
     error: () => {
@@ -205,6 +206,14 @@ removeImage(index: number) {
         this.data.existingImages = images;
       });
     }
+  });
+}
+openImagePreview(src: string) {
+this.dialog.open(ImagePreviewDialogComponent, {
+    data: { src },
+    maxWidth: '95vw',
+    maxHeight: '95vh',
+    panelClass: 'img-preview-dialog'
   });
 }
 

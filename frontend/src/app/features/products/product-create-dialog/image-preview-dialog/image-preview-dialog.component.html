@@ -1,0 +1,18 @@
+<div class="viewer"
+     (wheel)="onWheel($event)"
+     (mousemove)="drag($event)"
+     (mouseup)="stopDrag()"
+     (mouseup)="stopDrag()"
+     (mouseleave)="stopDrag()">
+
+  <img
+    [src]="data.src"
+    class="image"
+    draggable="false"
+    (dragstart)="$event.preventDefault()"
+    (mousedown)="startDrag($event)"
+    (dblclick)="resetZoom()"
+    [style.transform]="'translate(' + posX + 'px,' + posY + 'px) scale(' + zoom + ')'"
+  />
+
+</div>

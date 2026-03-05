@@ -109,7 +109,8 @@
 
       <img [src]="p"
            alt="preview"
-           style="width:92px; height:92px; object-fit:cover; border-radius:10px; border:1px solid #e5e5e5;" />
+           (click)="openImagePreview(p)"
+           style="width:92px; height:92px; object-fit:cover; border-radius:10px; border:1px solid #e5e5e5; cursor: zoom-in;" />
 
       <button mat-stroked-button type="button" (click)="removeImage(i)">
         Remove

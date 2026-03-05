@@ -1,0 +1,22 @@
+.viewer{
+  width:90vw;
+  height:90vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  background:#111;
+  cursor: grab;
+}
+
+.viewer:active{
+  cursor: grabbing;
+}
+
+.image{
+  max-width:90vw;
+  max-height:90vh;
+  transition: transform 0.05s;
+  user-select:none;
+  pointer-events:auto;
+}
