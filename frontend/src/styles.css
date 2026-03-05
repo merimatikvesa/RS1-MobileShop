@@ -65,3 +65,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mdc-label {
   color: #222 !important;
 }
+
+/* 1) Tekst izabrane vrijednosti u samom inputu (trigger) */
+.mat-mdc-select-value,
+.mat-mdc-select-value-text {
+  color: #000 !important;
+}
+
+/* 2) Tekst placeholdera (da nije bijel) */
+.mat-mdc-select-placeholder {
+  color: rgba(0,0,0,.6) !important;
+}
+
+/* 3) Tekst opcija u dropdown panelu (posebno za tvoj panelClass) */
+.ms-select-panel .mat-mdc-option .mdc-list-item__primary-text,
+.ms-select-panel .mat-mdc-option .mdc-list-item__secondary-text {
+  color: #000 !important;
+}

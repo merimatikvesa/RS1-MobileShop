@@ -34,7 +34,7 @@
     <mat-form-field appearance="outline">
       <mat-label>Supplier</mat-label>
       <mat-select formControlName="supplierId" >
-        <mat-option *ngFor="let s of data.suppliers" [value]="s.supplierId" style="color: black !important;">{{ s.name }}</mat-option>
+        <mat-option *ngFor="let s of data.suppliers" [value]="s.supplierId">{{ s.supplierName }}</mat-option>
       </mat-select>
       <mat-error *ngIf="form.get('supplierId')?.hasError('required')">Required</mat-error>
     </mat-form-field>
@@ -51,7 +51,7 @@
       <mat-label>Promotion (optional)</mat-label>
       <mat-select formControlName="promotionId" >
         <mat-option [value]="null">None</mat-option>
-        <mat-option *ngFor="let p of data.promotions" [value]="p.promotionId">{{ p.name }}</mat-option>
+        <mat-option *ngFor="let p of data.promotions" [value]="p.promotionId">{{ p.promotionName }}</mat-option>
       </mat-select>
     </mat-form-field>
     
