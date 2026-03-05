@@ -12,8 +12,7 @@
                               <li><a routerLink="/inventory">Inventory</a></li>
                               </ul>
                             </li>
-              <button mat-raised-button class="nav-link-btn" routerLink="/shop"> Shop </button>
-
+                            <li><a routerLink="/shop"> Shop </a></li>
 							<ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
         					<li><a routerLink="/login">Sign In</a></li>
 							</ng-container>
@@ -43,7 +42,7 @@
 						</header>
 						<p>Meet our most innovative design, re-engineered to be our slimmest, lightest Fold ever. With expansive screens inside and out to show you a new, undisrupted world of craftsmanship, it's the Ultra experience, unfolded.</p>
 						<ul class="actions">
-							<li><a href="#" class="button">Shop Now</a></li>
+							<li><a href="#" class="button" routerLink="/shop">Shop Now</a></li>
 						</ul>
 					</div>
 					<a href="#three" class="goto-next scrolly">Next</a>
@@ -59,7 +58,7 @@
 						</header>
 						<p>Galaxy S25 Ultra redefines the way you interact with your phone. An ergonomic exterior features smoother edges and a comfortable grip, while the redesigned One UI 7 streamlines every task.</p>
 						<ul class="actions">
-							<li><a href="#" class="button">Shop Now</a></li>
+							<li><a href="#" class="button" routerLink="/shop">Shop Now</a></li>
 						</ul>
 					</div>
 					<a href="#four" class="goto-next scrolly">Next</a>
@@ -93,7 +92,7 @@
 						</div>
 						<footer class="major">
 							<ul class="actions special">
-								<li><a href="#" class="button">Explore Our Collection</a></li>
+								<li><a href="#" class="button" routerLink="/shop">Explore Our Collection</a></li>
 							</ul>
 						</footer>
 					</div>

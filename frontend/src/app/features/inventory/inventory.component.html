@@ -9,7 +9,7 @@
           <li><a routerLink="/inventory">Inventory</a></li>
         </ul>
       </li>
-      <li><a routerLink="/">Shop</a></li>
+      <li><a routerLink="/shop">Shop</a></li>
       <ng-container *ngIf="!auth.isLoggedIn(); else loggedIn">
         <li><a routerLink="/login">Sign In</a></li>
       </ng-container>
