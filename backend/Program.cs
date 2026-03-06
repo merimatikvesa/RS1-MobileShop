@@ -98,15 +98,33 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddHttpClient<backend.Services.Security.RecaptchaService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://rs1-mobileshop.onrender.com",
+                "https://localhost:4200",
+                "http://localhost:4200"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseCors("FrontendPolicy");
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.UseStaticFiles();
 
