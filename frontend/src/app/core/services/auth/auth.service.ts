@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { tap, Observable, BehaviorSubject } from 'rxjs';
 import { LoginRequestDto } from '../../models/auth/login-request.dto';
 import { LoginResponseDto } from '../../models/auth/login-response.dto';
-import { environment } from '../../../../evnvironments/environment';
+import { environment } from '../../../../environments/environment';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {RegisterRequestDto} from '../../models/auth/register-request.dto';
 

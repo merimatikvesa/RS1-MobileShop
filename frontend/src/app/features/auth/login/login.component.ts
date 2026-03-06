@@ -9,8 +9,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { RecaptchaModule } from 'ng-recaptcha';
-import { environment } from '../../../../evnvironments/environment';
+import { RecaptchaModule } from '@proagenda/ng-recaptcha';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
