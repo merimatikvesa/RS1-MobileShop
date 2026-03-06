@@ -28,12 +28,14 @@ VALUES
 
 -- CATEGORY
 INSERT INTO Categories (Name)
-VALUES ('Smartphones');
+VALUES ('Smartphones'), ('Phone Cases'), ('Charger');
+
+
 
 -- SUPPLIER
 INSERT INTO Suppliers (SupplierName, PhoneNumber, Address)
 VALUES
-('Main Supplier', '+38761111222', 'Sarajevo, BiH');
+('Main Supplier', '+38761111222', 'Sarajevo, BiH'), ('Default Supplier', '+38761111222', 'Sarajevo, BiH');
 
 -- PRODUCTS
 INSERT INTO Products (ProductName, Model, Price, BrandId, SupplierId, CategoryId, PromotionId, CreatedAt)
