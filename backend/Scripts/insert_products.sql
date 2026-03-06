@@ -15,6 +15,17 @@ DBCC CHECKIDENT ('Suppliers', RESEED, 0);
 DBCC CHECKIDENT ('Products', RESEED, 0);
 DBCC CHECKIDENT ('Images', RESEED, 0);
 DBCC CHECKIDENT ('ProductImages', RESEED, 0);
+DBCC CHECKIDENT ('Accounts', RESEED, 0);
+DBCC CHECKIDENT ('Administrators', RESEED, 0);
+
+--ACCOUNTS
+INSERT INTO dbo.Accounts(Username, [Password], FirstName, LastName) VALUES('admin@gmail.com', 'admin123.','Jane','Admin1'), ('user@gmail.com', 'user123.','Jack','User1')
+
+--ADMINISTRATORS
+INSERT INTO dbo.Administrators(AccountId) VALUES('1')
+
+--USERS
+INSERT INTO dbo.Users(Email,AccountId,FullName) VALUES('user@gmail.com','2','Jack User1')
 
 -- BRANDS
 INSERT INTO Brands (Name)
