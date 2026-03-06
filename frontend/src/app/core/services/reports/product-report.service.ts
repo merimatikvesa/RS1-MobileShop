@@ -24,7 +24,7 @@ export class ReportsService {
       httpParams = httpParams.set('productName', params.productName.trim());
     }
 
-    const API = 'https://localhost:7275';
+    const API = 'https://rs1-mobileshop-api.onrender.com';
 
       return this.http.get(`${API}/api/reports/products`, {
         params: httpParams,

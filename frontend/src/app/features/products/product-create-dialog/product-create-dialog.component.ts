@@ -51,7 +51,7 @@ export class ProductCreateDialogComponent {
   uploadError: string | null = null;
   isDragging = false;
 
-  private apiBaseUrl = 'https://localhost:7275';
+  private apiBaseUrl = 'https://rs1-mobileshop-api.onrender.com';
  
   constructor(
     private fb: FormBuilder,
@@ -201,7 +201,6 @@ removeImage(index: number) {
   this.productsService.deleteProductImage(productId, productImageId).subscribe({
     next: () => {},
     error: () => {
-      // ako fail-a, možeš samo reload (ili vrati nazad)
       this.productsService.getProductImages(productId).subscribe(images => {
         this.data.existingImages = images;
       });

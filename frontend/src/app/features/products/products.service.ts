@@ -25,7 +25,7 @@ export interface ProductImageDto {
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
-  private apiUrl = 'https://localhost:7275/api/products';
+  private apiUrl = 'https://rs1-mobileshop-api.onrender.com/api/products';
 
   constructor(private http: HttpClient) {}
 
@@ -46,17 +46,17 @@ export class ProductsService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
   getBrands() {
-  return this.http.get<BrandDto[]>('https://localhost:7275/api/brands');
+  return this.http.get<BrandDto[]>('https://rs1-mobileshop-api.onrender.com/api/brands');
   } 
 
   getCategories() {
-  return this.http.get<CategoryDto[]>('https://localhost:7275/api/categories');
+  return this.http.get<CategoryDto[]>('https://rs1-mobileshop-api.onrender.com/api/categories');
   }
   getPromotions(){
-    return this.http.get<PromotionDto[]>('https://localhost:7275/api/promotions')
+    return this.http.get<PromotionDto[]>('https://rs1-mobileshop-api.onrender.com/api/promotions')
   }
    getSuppliers(){
-    return this.http.get<SupplierDto[]>('https://localhost:7275/api/suppliers')
+    return this.http.get<SupplierDto[]>('https://rs1-mobileshop-api.onrender.com/api/suppliers')
   }
   create(dto: ProductCreateDto) {
   return this.http.post(this.apiUrl, dto);
