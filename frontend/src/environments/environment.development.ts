@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'https://rs1-mobileshop-api.onrender.com',
-  recaptchaSiteKey: '6LdBIIIsAAAAAL3f41a6m8NReZ9oe2FXGPj_YryU'
+  recaptchaSiteKey: '6LdBIIIsAAAAACKAD1Wa0F1wRynH-seSKu5FIj9Z'
 };
