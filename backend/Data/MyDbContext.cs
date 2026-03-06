@@ -47,6 +47,12 @@ namespace backend.Data
             modelBuilder.Entity<AuthToken>()
                 .HasIndex(t => t.Value)
                 .IsUnique();
+            
+            modelBuilder.Entity<Product>()
+                .Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+
 
         }
     }
