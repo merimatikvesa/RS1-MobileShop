@@ -26,7 +26,7 @@
   <h2 class="shop-title">Shop</h2>
   <p class="shop-subtitle">Browse our latest products</p>
 
-  <h2 class="section-title">Best Deals</h2>
+  <h3 class="section-title">Best Deals</h3>
 
   <div class="carousel">
     <div class="carousel-track">
@@ -36,9 +36,11 @@
       >
         <img
           mat-card-image
-          [src]="p.imageUrl || 'assets/placeholder.png'"
+          [src]="productImages[p.productId]
+        ? 'https://localhost:7275' + productImages[p.productId]
+        : 'assets/placeholder.png'"
           alt="{{ p.productName }}"
-        />
+        >
 
         <mat-card-content>
           <h3>{{ p.productName }}</h3>
@@ -70,15 +72,21 @@
     </div>
   </mat-card>
 
-  <h2 class="section-title">All Products</h2>
+  <h3 class="section-title">All Products</h3>
 
   <!-- product grid -->
   <section class="product-grid">
-    <mat-grid-list cols="3" gutterSize="16px" rowHeight="1:1">
+    <mat-grid-list cols="3" gutterSize="16px" rowHeight="400px">
       <mat-grid-tile *ngFor="let p of products">
 
         <mat-card class="product-card">
-          <img mat-card-image [src]="p.imageUrl && p.imageUrl.trim() !== '' ? p.imageUrl   : 'assets/placeholder.png'" alt="{{ p.productName }}"/>
+          <img
+            mat-card-image
+            [src]="productImages[p.productId]
+        ? 'https://localhost:7275' + productImages[p.productId]
+        : 'assets/placeholder.png'"
+            alt="{{ p.productName }}"
+          >
 
           <button mat-icon-button color="warn" (click)="toggleFavorite(p)">
             <mat-icon>
