@@ -15,6 +15,7 @@ import {RouterLink} from '@angular/router';
 import {AuthService} from '../../core/services/auth/auth.service';
 import {Router, RouterModule} from '@angular/router';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { HttpClient } from '@angular/common/http';
 
 
 @Component({
@@ -37,6 +38,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 export class ShopComponent {
 
   carouselProducts: ProductDto[] = [];
+  productImages: { [key:number]: string } = {};
   products: any[] = [];
   totalCount = 0;
 
@@ -50,6 +52,7 @@ export class ShopComponent {
   constructor(private shopService: ShopService,
               public auth: AuthService,
               private router: Router,
+              private http: HttpClient
               ) {
 
     this.searchControl.valueChanges
@@ -84,6 +87,9 @@ export class ShopComponent {
           .sort((a, b) => a.price - b.price)
           .slice(0, 8);
       }
+      this.products.forEach(p => {
+        this.loadImages(p.productId);
+      });
     });
   }
   toggleFavorite(product: ProductDto) {
@@ -113,5 +119,13 @@ export class ShopComponent {
     this.pageNumber = event.pageIndex + 1; // Angular paginator je 0-based
     this.pageSize = event.pageSize;
     this.loadProducts(this.currentSearch);
+  }
+  loadImages(productId: number) {
+    this.http.get<any[]>(`https://localhost:7275/api/products/${productId}/images`)
+      .subscribe(res => {
+        if (res.length > 0) {
+          this.productImages[productId] = res[0].imagePath;
+        }
+      });
   }
 }
